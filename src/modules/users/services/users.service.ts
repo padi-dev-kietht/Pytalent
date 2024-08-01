@@ -23,7 +23,7 @@ export class UsersService {
       const paramCreate: createUserInterface = plainToClass(Users, {
         email: params.email,
         password: await bcrypt.hash(params.password, 10),
-        role: RoleEnum.MEMBER,
+        role: RoleEnum.CANDIDATE,
       });
       user = await this.usersRepository.create(paramCreate);
     }

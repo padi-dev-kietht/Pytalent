@@ -15,6 +15,10 @@ import { AuthModule } from '@modules/auth/auth.module';
 
 import { HppMiddleware } from '@middleware/hpp.middleware';
 import { Users } from '@entities/users.entity';
+// import { GraphQLModule } from '@nestjs/graphql';
+// import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+// import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+
 // import { Artist } from '@entities/artist.entity';
 // import { UserArtist } from '@entities/user-artist.entity';
 
@@ -45,6 +49,18 @@ const options = databaseConfig as TypeOrmModuleOptions;
     //other module
     UsersModule,
     AuthModule,
+
+    //graphQL module
+    // GraphQLModule.forRoot<ApolloDriverConfig>({
+    //   driver: ApolloDriver,
+    //   typePaths: ['./**/*.graphql'],
+    //   definitions: {
+    //     path: path.join(process.cwd(), 'src/graphql.ts'),
+    //     outputAs: 'class',
+    //   },
+    //   playground: false,
+    //   plugins: [ApolloServerPluginLandingPageLocalDefault()],
+    // }),
   ],
   controllers: [AppController],
   providers: [AppService],

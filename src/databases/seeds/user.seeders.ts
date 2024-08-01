@@ -10,7 +10,7 @@ export default class CreateUsers implements Seeder {
     const users = [
       {
         id: 1,
-        email: 'user1@gmail.com',
+        email: 'admin@gmail.com',
         password:
           '$2b$10$8NoeFbeBargsDsClhpfkDexfk0RtV6kDSJa/yTOwJ3Wbo3n6e3k/.', //123456
         role: RoleEnum.ADMIN,
@@ -23,10 +23,10 @@ export default class CreateUsers implements Seeder {
       },
       {
         id: 2,
-        email: 'user2@gmail.com',
+        email: 'hr@gmail.com',
         password:
           '$2b$10$8NoeFbeBargsDsClhpfkDexfk0RtV6kDSJa/yTOwJ3Wbo3n6e3k/.', //123456
-        role: RoleEnum.SELLER,
+        role: RoleEnum.HR,
         created_at: new Date(
           new Date().setDate(firstThisWeek - 7),
         ).toISOString(),
@@ -36,17 +36,17 @@ export default class CreateUsers implements Seeder {
       },
       {
         id: 3,
-        email: 'user3@gmail.com',
+        email: 'candidate@gmail.com',
         password:
           '$2b$10$8NoeFbeBargsDsClhpfkDexfk0RtV6kDSJa/yTOwJ3Wbo3n6e3k/.', //123456
-        role: RoleEnum.MEMBER,
+        role: RoleEnum.CANDIDATE,
         created_at: new Date(
           new Date().setDate(firstThisWeek - 7),
         ).toISOString(),
         updated_at: new Date(
           new Date().setDate(firstThisWeek - 7),
         ).toISOString(),
-      }
+      },
     ];
     await connection
       .createQueryBuilder()

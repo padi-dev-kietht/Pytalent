@@ -1,10 +1,12 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class createTokenTable1677557457977 implements MigrationInterface {
+export class createAssessmentsResultTable1722503925876
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'token',
+        name: 'assessments_result',
         columns: [
           {
             name: 'id',
@@ -14,16 +16,20 @@ export class createTokenTable1677557457977 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'user_id',
-            type: 'int',
+            name: 'score',
+            type: 'integer',
           },
           {
-            name: 'token',
-            type: 'varchar',
+            name: 'assessment_id',
+            type: 'integer',
           },
           {
-            name: 'type',
-            type: 'varchar',
+            name: 'game_id',
+            type: 'integer',
+          },
+          {
+            name: 'completed_at',
+            type: 'datetime',
           },
           {
             name: 'created_at',
@@ -40,6 +46,6 @@ export class createTokenTable1677557457977 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('token');
+    await queryRunner.dropTable('assessments_result');
   }
 }

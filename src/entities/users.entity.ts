@@ -1,13 +1,5 @@
 import 'reflect-metadata';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  BeforeInsert,
-  Index,
-  ManyToMany,
-  JoinTable,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
 import { BaseEntity } from '@entities/base.entity';
 import { RoleEnum } from '@enum/role.enum';
 
