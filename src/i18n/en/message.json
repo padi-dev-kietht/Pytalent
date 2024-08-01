@@ -1,0 +1,5 @@
+{
+  "SUCCESS": "Success",
+  "INVALID_EMAIL_PASSWORD": "Email or password invalid",
+  "IS_INCORRECT_EMAIL_OR_PASSWORD": "Email or password is incorrect"
+}

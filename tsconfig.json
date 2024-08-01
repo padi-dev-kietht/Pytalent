@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "src",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "resolveJsonModule": true,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@*": ["*"],
+      "@env": ["env.ts"],
+      "@entities/*": ["entities/*"],
+      "@databases/*": ["databases/*"],
+      "@modules/*": ["modules/*"],
+      "@interfaces/*": ["shared/interfaces/*"],
+      "@guards/*": ["shared/guards/*"],
+      "@filters/*": ["shared/filters/*"],
+      "@middleware/*": ["middleware/*"],
+      "@interceptors/*": ["shared/interceptors/*"],
+      "@decorators/*": ["shared/decorators/*"],
+      "@pipes/*": ["shared/pipes/*"],
+      "@utils": ["utils"],
+      "@common/*": ["common/*"],
+      "@plugins": ["common/plugins"],
+      "@enum/*": ["common/enum/*"],
+      "@exception/*": ["exception/*"],
+      "@shared/*": ["shared/*"],
+      "@logs/*": ["logs/*"]
+    }
+  },
+  "include": ["src", "src/**/*.ts", "test"],
+  "exclude": ["src/node_modules", "dist", "*.js"],
+  "types": ["node"],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  }
+}
