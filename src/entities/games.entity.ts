@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
 
 @Entity()
-export class Assessments extends BaseEntity {
+export class Games extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -11,13 +11,4 @@ export class Assessments extends BaseEntity {
 
   @Column({ type: 'longtext' })
   description: string;
-
-  @Column({ type: 'datetime' })
-  start_date: Date;
-
-  @Column({ type: 'datetime' })
-  end_date: Date;
-
-  @Column({ type: 'int' })
-  created_by: number;
 }
