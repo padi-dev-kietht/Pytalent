@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class createHrGamesTable1722504235561 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -33,6 +38,20 @@ export class createHrGamesTable1722504235561 implements MigrationInterface {
         ],
       }),
     );
+
+    await queryRunner.createForeignKeys('hr_games', [
+      new TableForeignKey({
+        columnNames: ['game_id'],
+        referencedTableName: 'games',
+        referencedColumnNames: ['id'],
+      }),
+
+      new TableForeignKey({
+        columnNames: ['hr_id'],
+        referencedTableName: 'users',
+        referencedColumnNames: ['id'],
+      }),
+    ]);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
