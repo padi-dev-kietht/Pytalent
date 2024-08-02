@@ -13,7 +13,7 @@ import { RoleEnum } from '@enum/role.enum';
 export class UsersService {
   constructor(private usersRepository: UsersRepository) {}
 
-  async checkOrCreateUser(params: FindUserInterface) {
+  async checkOrCreateHr(params: FindUserInterface) {
     let user: Users = await this.usersRepository.findOne({
       where: {
         email: params.email,
@@ -23,9 +23,10 @@ export class UsersService {
       const paramCreate: createUserInterface = plainToClass(Users, {
         email: params.email,
         password: await bcrypt.hash(params.password, 10),
-        role: RoleEnum.CANDIDATE,
+        role: RoleEnum.HR,
       });
       user = await this.usersRepository.create(paramCreate);
+      await this.usersRepository.save(user);
     }
     return user;
   }

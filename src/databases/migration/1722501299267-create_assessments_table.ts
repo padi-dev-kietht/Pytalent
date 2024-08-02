@@ -24,7 +24,7 @@ export class createAssessmentsTable1722501299267 implements MigrationInterface {
           },
           {
             name: 'description',
-            type: 'longtext',
+            type: 'text',
           },
           {
             name: 'start_date',

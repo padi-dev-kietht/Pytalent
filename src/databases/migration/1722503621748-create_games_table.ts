@@ -19,7 +19,7 @@ export class createGamesTable1722503621748 implements MigrationInterface {
           },
           {
             name: 'description',
-            type: 'longtext',
+            type: 'text',
           },
           {
             name: 'created_at',

@@ -19,7 +19,7 @@ export class Games extends BaseEntity {
   @Column({ type: 'varchar' })
   name: string;
 
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
   description: string;
 
   //Associations
@@ -30,10 +30,8 @@ export class Games extends BaseEntity {
   results: AssessmentsResult[];
 
   @ManyToMany(() => Assessments, (assessment: Assessments) => assessment.games)
-  @JoinTable()
   assessments: Assessments[];
 
   @ManyToMany(() => Users, (hr: Users) => hr.games)
-  @JoinTable()
   hrs: Users[];
 }

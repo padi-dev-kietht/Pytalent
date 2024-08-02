@@ -21,17 +21,17 @@ export class UsersAdminController extends BaseController {
     super();
   }
 
-  @Post('/create')
+  @Post('/hr/create')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.ADMIN]))
   async create(
     @Request() req,
     @Body() createUserDto: CreateUserDto,
     @Res() res: Response,
   ) {
-    await this.usersService.checkOrCreateUser(createUserDto);
+    await this.usersService.checkOrCreateHr(createUserDto);
     return this.successResponse(
       {
-        message: 'success',
+        message: 'Success',
       },
       res,
     );

@@ -45,5 +45,6 @@
   "types": ["node"],
   "ts-node": {
     "require": ["tsconfig-paths/register"]
-  }
+  },
+  "ignorePatterns": ["ormconfig.js"]
 }

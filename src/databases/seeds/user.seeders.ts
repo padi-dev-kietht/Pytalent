@@ -10,6 +10,7 @@ export default class CreateUsers implements Seeder {
     const users = [
       {
         id: 1,
+        name: 'Admin',
         email: 'admin@gmail.com',
         password:
           '$2b$10$8NoeFbeBargsDsClhpfkDexfk0RtV6kDSJa/yTOwJ3Wbo3n6e3k/.', //123456
@@ -23,6 +24,7 @@ export default class CreateUsers implements Seeder {
       },
       {
         id: 2,
+        name: 'HR',
         email: 'hr@gmail.com',
         password:
           '$2b$10$8NoeFbeBargsDsClhpfkDexfk0RtV6kDSJa/yTOwJ3Wbo3n6e3k/.', //123456
@@ -36,6 +38,7 @@ export default class CreateUsers implements Seeder {
       },
       {
         id: 3,
+        name: 'Candidate',
         email: 'candidate@gmail.com',
         password:
           '$2b$10$8NoeFbeBargsDsClhpfkDexfk0RtV6kDSJa/yTOwJ3Wbo3n6e3k/.', //123456

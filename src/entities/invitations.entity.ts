@@ -15,7 +15,7 @@ export class Invitations extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'enum' })
+  @Column()
   status: InvitationStatusEnum;
 
   @Column({ type: 'int' })

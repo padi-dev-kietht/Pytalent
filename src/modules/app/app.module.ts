@@ -15,12 +15,14 @@ import { AuthModule } from '@modules/auth/auth.module';
 
 import { HppMiddleware } from '@middleware/hpp.middleware';
 import { Users } from '@entities/users.entity';
+import { Invitations } from '../../entities/invitations.entity';
+import { Games } from '../../entities/games.entity';
+import { Assessments } from '../../entities/assessments.entity';
+import { AssessmentsResult } from '../../entities/assessments_result.entity';
+import { Token } from '../../entities/token.entity';
 // import { GraphQLModule } from '@nestjs/graphql';
 // import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 // import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
-
-// import { Artist } from '@entities/artist.entity';
-// import { UserArtist } from '@entities/user-artist.entity';
 
 const options = databaseConfig as TypeOrmModuleOptions;
 
@@ -31,7 +33,14 @@ const options = databaseConfig as TypeOrmModuleOptions;
       limit: 10,
     }),
 
-    TypeOrmModule.forFeature([Users]),
+    TypeOrmModule.forFeature([
+      Users,
+      Invitations,
+      Games,
+      Token,
+      Assessments,
+      AssessmentsResult,
+    ]),
 
     TypeOrmModule.forRoot({
       ...options,

@@ -19,7 +19,7 @@ export class Assessments extends BaseEntity {
   @Column({ type: 'varchar' })
   name: string;
 
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
   description: string;
 
   @Column({ type: 'datetime' })

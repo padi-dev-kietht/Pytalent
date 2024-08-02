@@ -20,7 +20,7 @@ export class createInvitationsTable1722504036172 implements MigrationInterface {
           },
           {
             name: 'status',
-            type: 'enum',
+            type: 'varchar(255)',
           },
           {
             name: 'assessment_id',
