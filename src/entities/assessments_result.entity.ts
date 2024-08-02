@@ -1,5 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
+import { Assessments } from './assessments.entity';
+import { Games } from './games.entity';
 
 @Entity()
 export class AssessmentsResult extends BaseEntity {
@@ -17,4 +25,13 @@ export class AssessmentsResult extends BaseEntity {
 
   @Column({ type: 'datetime' })
   completed_at: Date;
+
+  //Associations
+  @ManyToOne(() => Assessments, (assessment: Assessments) => assessment.results)
+  @JoinColumn({ name: 'assessment_id' })
+  assessment: Assessments;
+
+  @ManyToOne(() => Games, (game: Games) => game.results)
+  @JoinColumn({ name: 'game_id' })
+  game: Games;
 }

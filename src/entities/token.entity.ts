@@ -1,5 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
+import { Users } from './users.entity';
 
 @Entity()
 export class Token extends BaseEntity {
@@ -14,4 +21,8 @@ export class Token extends BaseEntity {
 
   @Column({ type: 'varchar' })
   type: string;
+
+  @ManyToOne(() => Users, (user: Users) => user.tokens)
+  @JoinColumn({ name: 'user_id' })
+  user: Users;
 }

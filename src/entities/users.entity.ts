@@ -1,7 +1,18 @@
 import 'reflect-metadata';
-import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Index,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { BaseEntity } from '@entities/base.entity';
 import { RoleEnum } from '@enum/role.enum';
+import { Token } from './token.entity';
+import { Invitations } from './invitations.entity';
+import { Games } from './games.entity';
 
 @Entity()
 export class Users extends BaseEntity {
@@ -17,4 +28,25 @@ export class Users extends BaseEntity {
 
   @Column()
   role: RoleEnum;
+
+  //Associations
+  @OneToMany(() => Token, (token: Token) => token.user)
+  tokens: Token[];
+
+  @OneToMany(() => Invitations, (invitation: Invitations) => invitation.user)
+  invitations: Invitations[];
+
+  @ManyToMany(() => Games, (game: Games) => game.hrs)
+  @JoinTable({
+    name: 'hr_game',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'game_id',
+      referencedColumnName: 'id',
+    },
+  })
+  games: Games[];
 }
