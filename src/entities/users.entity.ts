@@ -30,7 +30,6 @@ export class Users extends BaseEntity {
   role: RoleEnum;
 
   //Associations
-
   @OneToMany(() => Token, (token: Token) => token.user)
   tokens: Token[];
 
