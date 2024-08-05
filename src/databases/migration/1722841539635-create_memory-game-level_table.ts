@@ -8,7 +8,7 @@ export class createMemoryGameLevelTable1722841539635
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'memory_game_levels',
+        name: 'memory_game_level',
         columns: [
           {
             name: 'id',

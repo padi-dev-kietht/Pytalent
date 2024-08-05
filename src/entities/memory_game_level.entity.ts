@@ -1,11 +1,6 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { MemoryGamePattern } from './memory_game_pattern.entity';
+import { BaseEntity } from './base.entity';
 
 @Entity()
 export class MemoryGameLevel extends BaseEntity {

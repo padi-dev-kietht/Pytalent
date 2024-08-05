@@ -8,7 +8,7 @@ export class createMemoryGamePatternsTable1722841715089
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'memory_game_patterns',
+        name: 'memory_game_pattern',
         columns: [
           {
             name: 'id',
