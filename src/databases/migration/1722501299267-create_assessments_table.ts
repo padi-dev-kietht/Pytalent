@@ -39,6 +39,10 @@ export class createAssessmentsTable1722501299267 implements MigrationInterface {
             type: 'integer',
           },
           {
+            name: 'is_archived',
+            type: 'boolean',
+          },
+          {
             name: 'created_at',
             type: 'datetime',
           },

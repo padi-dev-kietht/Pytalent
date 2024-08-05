@@ -31,6 +31,9 @@ export class Assessments extends BaseEntity {
   @Column({ type: 'int' })
   created_by: number;
 
+  @Column({ type: 'boolean' })
+  is_archived: boolean;
+
   //Associations
   @OneToMany(
     () => Invitations,
