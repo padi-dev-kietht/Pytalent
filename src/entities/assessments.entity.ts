@@ -23,10 +23,10 @@ export class Assessments extends BaseEntity {
   @Column({ type: 'text' })
   description: string;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', nullable: true })
   start_date: Date;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', nullable: true })
   end_date: Date;
 
   @Column({ type: 'int' })
