@@ -1,5 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
+import { Games } from './games.entity';
+import { Users } from './users.entity';
+import { Assessments } from './assessments.entity';
 
 @Entity()
 export class GameResult extends BaseEntity {
@@ -17,4 +26,19 @@ export class GameResult extends BaseEntity {
 
   @Column({ type: 'integer' })
   score: number;
+
+  @ManyToOne(() => Games, (game: Games) => game.game_results)
+  @JoinColumn({ name: 'game_id' })
+  game: Games;
+
+  @ManyToOne(() => Users, (user: Users) => user.game_results)
+  @JoinColumn({ name: 'candidate_id' })
+  candidate: Users;
+
+  @ManyToOne(
+    () => Assessments,
+    (assessment: Assessments) => assessment.game_results,
+  )
+  @JoinColumn({ name: 'assessment_id' })
+  assessment: Assessments;
 }

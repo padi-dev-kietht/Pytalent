@@ -7,3 +7,4 @@ export { AssessmentsResult as AssessmentsResultEntity } from './assessments_resu
 export { LogicalQuestions as LogicalQuestionsEntity } from './logical_questions.entity';
 export { MemoryGameLevel as MemoryGameLevelEntity } from './memory_game_level.entity';
 export { MemoryGamePattern as MemoryGamePatternEntity } from './memory_game_pattern.entity';
+export { GameResult as GameResultEntity } from './game_result.entity';

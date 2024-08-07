@@ -10,6 +10,7 @@ import { BaseEntity } from './base.entity';
 import { Assessments } from './assessments.entity';
 import { AssessmentsResult } from './assessments_result.entity';
 import { Users } from './users.entity';
+import { GameResult } from './game_result.entity';
 
 @Entity()
 export class Games extends BaseEntity {
@@ -27,7 +28,10 @@ export class Games extends BaseEntity {
     () => AssessmentsResult,
     (result: AssessmentsResult) => result.game,
   )
-  results: AssessmentsResult[];
+  assessment_results: AssessmentsResult[];
+
+  @OneToMany(() => GameResult, (result: GameResult) => result.game)
+  game_results: GameResult[];
 
   @ManyToMany(() => Assessments, (assessment: Assessments) => assessment.games)
   assessments: Assessments[];

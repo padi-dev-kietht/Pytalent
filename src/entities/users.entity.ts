@@ -13,6 +13,7 @@ import { RoleEnum } from '@enum/role.enum';
 import { Invitations } from './invitations.entity';
 import { Games } from './games.entity';
 import { Token } from './token.entity';
+import { GameResult } from './game_result.entity';
 
 @Entity()
 export class Users extends BaseEntity {
@@ -35,6 +36,9 @@ export class Users extends BaseEntity {
 
   @OneToMany(() => Invitations, (invitation: Invitations) => invitation.user)
   invitations: Invitations[];
+
+  @OneToMany(() => GameResult, (result: GameResult) => result.candidate)
+  game_results: GameResult[];
 
   @ManyToMany(() => Games, (game: Games) => game.hrs)
   @JoinTable({
