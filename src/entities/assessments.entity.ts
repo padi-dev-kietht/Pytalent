@@ -32,7 +32,7 @@ export class Assessments extends BaseEntity {
   @Column({ type: 'int' })
   created_by: number;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: false })
   is_archived: boolean;
 
   //Associations
