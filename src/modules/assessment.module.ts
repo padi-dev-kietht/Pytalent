@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AssessmentsEntity } from '../../entities';
-import { AssessmentController } from './controllers/assessment.controller';
-import { AssessmentService } from './services/assessment.service';
-import { AssessmentRepository } from './repositories/assessment.repository';
+import { AssessmentsEntity } from '../entities';
+import { AssessmentRepository } from '../repositories/assessment.repository';
+import { AssessmentController } from '../controllers/assessment.controller';
+import { AssessmentService } from '../services/assessment.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AssessmentsEntity])],

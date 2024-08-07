@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Assessments } from '../../../entities/assessments.entity';
-import { AssessmentRepository } from '../../assessments/repositories/assessment.repository';
 import { plainToClass } from 'class-transformer';
-import { FindOrCreateAssessmentInterface } from '../../../shared/interfaces/assessment.interface';
+import { Assessments } from '../entities/assessments.entity';
+import { AssessmentRepository } from '../repositories/assessment.repository';
+import { FindOrCreateAssessmentInterface } from '../shared/interfaces/assessment.interface';
 
 @Injectable()
 export class AssessmentService {

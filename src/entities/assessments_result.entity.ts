@@ -31,7 +31,7 @@ export class AssessmentsResult extends BaseEntity {
   @JoinColumn({ name: 'assessment_id' })
   assessment: Assessments;
 
-  @ManyToOne(() => Games, (game: Games) => game.results)
+  @ManyToOne(() => Games, (game: Games) => game.assessment_results)
   @JoinColumn({ name: 'game_id' })
   game: Games;
 }

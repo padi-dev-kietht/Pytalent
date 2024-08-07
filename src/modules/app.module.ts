@@ -1,8 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppService } from '../services/app.service';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import databaseConfig from '../../databases/config/index';
+import databaseConfig from '../databases/config/index';
 import * as path from 'path';
 import {
   AcceptLanguageResolver,
@@ -10,18 +9,18 @@ import {
   I18nModule,
 } from 'nestjs-i18n';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { UsersModule } from '@modules/users/users.module';
-import { AuthModule } from '@modules/auth/auth.module';
 
 import { HppMiddleware } from '@middleware/hpp.middleware';
 import { Users } from '@entities/users.entity';
-import { Invitations } from '../../entities/invitations.entity';
-import { Games } from '../../entities/games.entity';
-import { Assessments } from '../../entities/assessments.entity';
-import { AssessmentsResult } from '../../entities/assessments_result.entity';
-import { Token } from '../../entities/token.entity';
-import { AssessmentsModule } from '../assessments/assessment.module';
-import { GamesModule } from '../games/games.module';
+import { Invitations } from '../entities/invitations.entity';
+import { Games } from '../entities/games.entity';
+import { Assessments } from '../entities/assessments.entity';
+import { AssessmentsResult } from '../entities/assessments_result.entity';
+import { Token } from '../entities/token.entity';
+import { AssessmentsModule } from './assessment.module';
+import { AppController } from '../controllers/app.controller';
+import { UsersModule } from './users.module';
+import { AuthModule } from './auth.module';
 // import { GraphQLModule } from '@nestjs/graphql';
 // import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 // import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
@@ -61,7 +60,6 @@ const options = databaseConfig as TypeOrmModuleOptions;
     UsersModule,
     AuthModule,
     AssessmentsModule,
-    GamesModule,
     //graphQL module
     // GraphQLModule.forRoot<ApolloDriverConfig>({
     //   driver: ApolloDriver,

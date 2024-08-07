@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '@modules/users/repositories/user.repository';
 import * as bcrypt from 'bcrypt';
 import { Users } from '@entities/users.entity';
 import { plainToClass } from 'class-transformer';
@@ -8,6 +7,7 @@ import {
   FindUserInterface,
 } from '@interfaces/user.interface';
 import { RoleEnum } from '@enum/role.enum';
+import { UsersRepository } from '../repositories/user.repository';
 
 @Injectable()
 export class UsersService {

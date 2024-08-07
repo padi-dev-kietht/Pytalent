@@ -3,7 +3,7 @@ import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@modules/app/app.module';
 import { AppService } from '@modules/app/app.service';
-import { AuthService } from '@modules/auth/auth.service';
+import { AuthService } from '@services/auth.service';
 import { RoleEnum } from '@enum/role.enum';
 
 describe('UsersAdminController (e2e)', () => {

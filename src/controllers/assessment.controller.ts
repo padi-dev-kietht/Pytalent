@@ -8,13 +8,13 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../../../shared/guards/jwt-auth.guard';
-import { AuthorizationGuard } from '../../../shared/guards/authorization.guard';
-import { RoleEnum } from '../../../common/enum/role.enum';
-import { CreateAssessmentsDto } from '../dto/create-assessments.dto';
-import { AssessmentService } from '../services/assessment.service';
-import { BaseController } from '../../app/base.controller';
 import { Response } from 'express';
+import { JwtAuthGuard } from '../shared/guards/jwt-auth.guard';
+import { RoleEnum } from '../common/enum/role.enum';
+import { AuthorizationGuard } from '../shared/guards/authorization.guard';
+import { CreateAssessmentsDto } from '../dtos/create-assessments.dto';
+import { AssessmentService } from '../services/assessment.service';
+import { BaseController } from './base.controller';
 
 @Controller('hr')
 export class AssessmentController extends BaseController {
