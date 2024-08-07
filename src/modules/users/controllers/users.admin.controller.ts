@@ -5,7 +5,7 @@ import {
   Res,
   UseGuards,
   Request,
-  Get,
+  Delete,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '@guards/jwt-auth.guard';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
@@ -29,6 +29,18 @@ export class UsersAdminController extends BaseController {
     @Res() res: Response,
   ) {
     await this.usersService.checkOrCreateHr(createUserDto);
+    return this.successResponse(
+      {
+        message: 'Success',
+      },
+      res,
+    );
+  }
+
+  @Delete('/hr/delete/:id')
+  @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.ADMIN]))
+  async delete(@Request() req, @Res() res: Response) {
+    await this.usersService.deleteHr(Number(req.params.id));
     return this.successResponse(
       {
         message: 'Success',

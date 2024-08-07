@@ -20,6 +20,8 @@ import { Games } from '../../entities/games.entity';
 import { Assessments } from '../../entities/assessments.entity';
 import { AssessmentsResult } from '../../entities/assessments_result.entity';
 import { Token } from '../../entities/token.entity';
+import { AssessmentsModule } from '../assessments/assessment.module';
+import { GamesModule } from '../games/games.module';
 // import { GraphQLModule } from '@nestjs/graphql';
 // import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 // import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
@@ -58,7 +60,8 @@ const options = databaseConfig as TypeOrmModuleOptions;
     //other module
     UsersModule,
     AuthModule,
-
+    AssessmentsModule,
+    GamesModule,
     //graphQL module
     // GraphQLModule.forRoot<ApolloDriverConfig>({
     //   driver: ApolloDriver,

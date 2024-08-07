@@ -13,7 +13,7 @@ import { RoleEnum } from '@enum/role.enum';
 export class UsersService {
   constructor(private usersRepository: UsersRepository) {}
 
-  async checkOrCreateHr(params: FindUserInterface) {
+  async checkOrCreateHr(params: FindUserInterface): Promise<Users> {
     let user: Users = await this.usersRepository.findOne({
       where: {
         email: params.email,
@@ -29,5 +29,14 @@ export class UsersService {
       await this.usersRepository.save(user);
     }
     return user;
+  }
+
+  async deleteHr(id: number) {
+    const user: Users = await this.usersRepository.findOne({ where: { id } });
+    if (user) {
+      await this.usersRepository.delete(id);
+    } else {
+      throw new Error('User not found');
+    }
   }
 }

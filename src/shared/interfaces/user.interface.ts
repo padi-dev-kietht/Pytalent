@@ -5,7 +5,6 @@ export interface UserModel {
   email: string;
   password: string;
 }
-
 export interface FindUserInterface {
   email: string;
   password: string;

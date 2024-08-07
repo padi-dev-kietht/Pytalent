@@ -1,12 +1,14 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class createQuestionsTable1722841266235 implements MigrationInterface {
-  name = 'createQuestionsTable1722841266235';
+export class createLogicalQuestionsTable1722841266235
+  implements MigrationInterface
+{
+  name = 'createLogicalQuestionsTable1722841266235';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'questions',
+        name: 'logical_questions',
         columns: [
           {
             name: 'id',
