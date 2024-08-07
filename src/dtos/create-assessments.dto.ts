@@ -1,6 +1,5 @@
 import {
   IsBoolean,
-  IsDateString,
   IsInt,
   IsNotEmpty,
   IsOptional,

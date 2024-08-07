@@ -14,6 +14,7 @@ import { Invitations } from './invitations.entity';
 import { Games } from './games.entity';
 import { Token } from './token.entity';
 import { GameResult } from './game_result.entity';
+import { Assessments } from './assessments.entity';
 
 @Entity()
 export class Users extends BaseEntity {
@@ -39,6 +40,12 @@ export class Users extends BaseEntity {
 
   @OneToMany(() => GameResult, (result: GameResult) => result.candidate)
   game_results: GameResult[];
+
+  @OneToMany(
+    () => Assessments,
+    (assessment: Assessments) => assessment.created_by,
+  )
+  assessments: Assessments[];
 
   @ManyToMany(() => Games, (game: Games) => game.hrs)
   @JoinTable({

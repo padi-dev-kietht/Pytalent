@@ -1,8 +1,10 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -11,6 +13,7 @@ import { Invitations } from './invitations.entity';
 import { AssessmentsResult } from './assessments_result.entity';
 import { Games } from './games.entity';
 import { GameResult } from './game_result.entity';
+import { Users } from './users.entity';
 
 @Entity()
 export class Assessments extends BaseEntity {
@@ -50,6 +53,10 @@ export class Assessments extends BaseEntity {
 
   @OneToMany(() => GameResult, (result: GameResult) => result.assessment)
   game_results: GameResult[];
+
+  @ManyToOne(() => Users, (hr: Users) => hr.assessments)
+  @JoinColumn({ name: 'created_by' })
+  created_by_hr: Users;
 
   @ManyToMany(() => Games, (game: Games) => game.assessments)
   @JoinTable({
