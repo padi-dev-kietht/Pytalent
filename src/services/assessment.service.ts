@@ -29,7 +29,7 @@ export class AssessmentService {
       assessment = await this.assessmentsRepository.create(paramCreate);
       await this.assessmentsRepository.save(assessment);
     }
-    return;
+    return assessment;
   }
 
   async getAllAssessments(): Promise<Assessments[]> {

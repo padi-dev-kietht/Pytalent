@@ -7,7 +7,7 @@ import {
 import { CustomizeException } from '@exception/customize.exception';
 import { I18nValidationException } from 'nestjs-i18n';
 import { env } from '@env';
-import {logger} from "@logs/app.log";
+import { logger } from '@logs/app.log';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
