@@ -32,6 +32,24 @@ export class AssessmentService {
     return;
   }
 
+  async getAllAssessments(): Promise<Assessments[]> {
+    const assessments: Assessments[] = await this.assessmentsRepository.find();
+    if (!assessments) {
+      throw new Error('Assessments not found');
+    }
+    return assessments;
+  }
+
+  async getAssessmentById(id: number): Promise<Assessments> {
+    const assessment: Assessments = await this.assessmentsRepository.findOne({
+      where: { id },
+    });
+    if (!assessment) {
+      throw new Error('Assessment not found');
+    }
+    return assessment;
+  }
+
   async archiveAssessment(id: number) {
     const assessment: Assessments = await this.assessmentsRepository.findOne({
       where: { id },

@@ -1,12 +1,12 @@
 import { Controller, Post, Body, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { CustomizeException } from '@exception/customize.exception';
-import { UsersService } from '@services/users.service';
 import { logger } from '@logs/app.log';
 import { HttpStatus } from '@nestjs/common/enums/http-status.enum';
 import { AuthService } from '../services/auth.service';
-import { LoginDto } from '../dtos/login.dto';
 import { BaseController } from './base.controller';
+import { UsersService } from '../services/users.service';
+import { LoginDto } from '../dtos/login.dto';
 
 @Controller()
 export class AuthController extends BaseController {

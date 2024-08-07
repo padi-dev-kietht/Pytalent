@@ -21,6 +21,7 @@ import { AssessmentsModule } from './assessment.module';
 import { AppController } from '../controllers/app.controller';
 import { UsersModule } from './users.module';
 import { AuthModule } from './auth.module';
+import { GameResult } from '../entities/game_result.entity';
 // import { GraphQLModule } from '@nestjs/graphql';
 // import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 // import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
@@ -41,6 +42,7 @@ const options = databaseConfig as TypeOrmModuleOptions;
       Token,
       Assessments,
       AssessmentsResult,
+      GameResult,
     ]),
 
     TypeOrmModule.forRoot({

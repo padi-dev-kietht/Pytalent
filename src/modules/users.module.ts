@@ -6,9 +6,13 @@ import { UsersAdminController } from '@controllers/users.admin.controller';
 import { UsersHrController } from '../controllers/users.hr.controller';
 import { UsersCandidateController } from '../controllers/users.candidate.controller';
 import { UsersRepository } from '../repositories/user.repository';
+import { AssessmentsModule } from './assessment.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UsersEntity, TokenEntity])],
+  imports: [
+    TypeOrmModule.forFeature([UsersEntity, TokenEntity]),
+    AssessmentsModule,
+  ],
   controllers: [
     UsersAdminController,
     UsersCandidateController,

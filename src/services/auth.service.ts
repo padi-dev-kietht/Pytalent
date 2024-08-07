@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '@services/users.service';
-import { UsersRepository } from '@modules/users/repositories/user.repository';
 import { CustomizeException } from '@exception/customize.exception';
 import { I18nService } from 'nestjs-i18n';
+import { UsersService } from './users.service';
+import { UsersRepository } from '../repositories/user.repository';
 
 @Injectable()
 export class AuthService {
