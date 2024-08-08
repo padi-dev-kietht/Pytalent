@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { Assessments } from '../entities/assessments.entity';
-import { AssessmentRepository } from '../repositories/assessment.repository';
+import { AssessmentsRepository } from '../repositories/assessment.repository';
 import { FindOrCreateAssessmentInterface } from '../shared/interfaces/assessment.interface';
 
 @Injectable()
 export class AssessmentService {
-  constructor(private assessmentsRepository: AssessmentRepository) {}
+  constructor(private assessmentsRepository: AssessmentsRepository) {}
 
   async checkOrCreateAssessment(
     params: FindOrCreateAssessmentInterface,

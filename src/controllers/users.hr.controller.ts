@@ -16,12 +16,49 @@ import { AuthorizationGuard } from '../shared/guards/authorization.guard';
 import { CreateAssessmentsDto } from '../dtos/create-assessments.dto';
 import { AssessmentService } from '../services/assessment.service';
 import { BaseController } from './base.controller';
+import { UsersService } from '../services/users.service';
 
 @Controller('hr')
 export class UsersHrController extends BaseController {
-  constructor(private assessmentService: AssessmentService) {
+  constructor(
+    private usersService: UsersService,
+    private assessmentService: AssessmentService,
+  ) {
     super();
   }
+
+  @Post('/assessments/create')
+  @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
+  async createAssessment(
+    @Body() createAssessmentDto: CreateAssessmentsDto,
+    @Res() res: Response,
+    @Request() req,
+  ) {
+    const userId = req.user.id;
+    await this.assessmentService.checkOrCreateAssessment(
+      createAssessmentDto,
+      userId,
+    );
+    return this.successResponse(
+      {
+        message: 'Assessment created',
+      },
+      res,
+    );
+  }
+
+  @Post('/assessments/games/add')
+  @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
+  async addGamesToAssessment(@Request() req, @Res() res: Response) {
+    await this.usersService.addGamesToAssessment(req.body.id, req.body.gameIds);
+    return this.successResponse(
+      {
+        message: 'Games added to assessment',
+      },
+      res,
+    );
+  }
+
   @Get('/assessments')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
   async getAllAssessments(@Res() res: Response) {
@@ -41,26 +78,6 @@ export class UsersHrController extends BaseController {
     return this.successResponse(
       {
         data: assessment,
-      },
-      res,
-    );
-  }
-
-  @Post('/assessments/create')
-  @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
-  async createAssessment(
-    @Body() createAssessmentDto: CreateAssessmentsDto,
-    @Res() res: Response,
-    @Request() req,
-  ) {
-    const userId = req.user.id;
-    await this.assessmentService.checkOrCreateAssessment(
-      createAssessmentDto,
-      userId,
-    );
-    return this.successResponse(
-      {
-        message: 'Assessment created',
       },
       res,
     );

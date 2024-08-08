@@ -10,12 +10,15 @@ import { RoleEnum } from '@enum/role.enum';
 import { UsersRepository } from '../repositories/user.repository';
 import { Games } from '../entities/games.entity';
 import { GamesRepository } from '../repositories/game.repository';
+import { Assessments } from '../entities/assessments.entity';
+import { AssessmentsRepository } from '../repositories/assessment.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
     private gamesRepository: GamesRepository,
     private usersRepository: UsersRepository,
+    private assessmentsRepository: AssessmentsRepository,
   ) {}
 
   // ADMIN
@@ -61,5 +64,23 @@ export class UsersService {
 
     hr.games = games;
     await this.usersRepository.save(hr);
+  }
+
+  // HR
+  async addGamesToAssessment(id: number, gameIds: number[]) {
+    const assessment: Assessments = await this.assessmentsRepository.findOne({
+      where: { id },
+    });
+    if (!assessment) {
+      throw new NotFoundException('Assessment not found');
+    }
+
+    const games: Games[] = await this.gamesRepository.findByIds(gameIds);
+    if (!games.length) {
+      throw new NotFoundException('Games not found');
+    }
+
+    assessment.games = games;
+    await this.assessmentsRepository.save(assessment);
   }
 }
