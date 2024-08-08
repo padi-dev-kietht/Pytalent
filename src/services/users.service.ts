@@ -67,9 +67,13 @@ export class UsersService {
   }
 
   // HR
-  async addGamesToAssessment(id: number, gameIds: number[]) {
+  async addGamesToAssessment(
+    assessment_id: number,
+    gameIds: number[],
+    user_id: number,
+  ) {
     const assessment: Assessments = await this.assessmentsRepository.findOne({
-      where: { id },
+      where: { id: assessment_id },
     });
     if (!assessment) {
       throw new NotFoundException('Assessment not found');
@@ -78,6 +82,19 @@ export class UsersService {
     const games: Games[] = await this.gamesRepository.findByIds(gameIds);
     if (!games.length) {
       throw new NotFoundException('Games not found');
+    }
+
+    if (assessment.created_by !== user_id) {
+      throw new NotFoundException('You are not the owner of this assessment');
+    }
+    const allowedGame = await this.usersRepository.query(
+      `SELECT user_id, game_id 
+       FROM hr_games 
+       WHERE user_id = ? AND game_id IN (?)`,
+      [user_id, gameIds],
+    );
+    if (allowedGame.length === 0) {
+      throw new NotFoundException('You are not allowed to add these games');
     }
 
     assessment.games = games;

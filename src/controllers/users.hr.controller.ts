@@ -47,10 +47,14 @@ export class UsersHrController extends BaseController {
     );
   }
 
-  @Post('/assessments/games/add')
+  @Post('/assessments/:id/add-games')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
   async addGamesToAssessment(@Request() req, @Res() res: Response) {
-    await this.usersService.addGamesToAssessment(req.body.id, req.body.gameIds);
+    await this.usersService.addGamesToAssessment(
+      req.params.id,
+      req.body.gameIds,
+      req.user.id,
+    );
     return this.successResponse(
       {
         message: 'Games added to assessment',
