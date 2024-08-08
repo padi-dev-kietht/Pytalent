@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { Assessments } from '../entities/assessments.entity';
 import { AssessmentRepository } from '../repositories/assessment.repository';
@@ -10,6 +10,7 @@ export class AssessmentService {
 
   async checkOrCreateAssessment(
     params: FindOrCreateAssessmentInterface,
+    userId: number,
   ): Promise<Assessments> {
     let assessment: Assessments = await this.assessmentsRepository.findOne({
       where: { name: params.name },
@@ -23,7 +24,7 @@ export class AssessmentService {
           start_date: params.start_date,
           end_date: params.end_date,
           is_archived: params.is_archived,
-          created_by: params.created_by,
+          created_by: userId,
         },
       );
       assessment = await this.assessmentsRepository.create(paramCreate);
@@ -57,6 +58,8 @@ export class AssessmentService {
     if (assessment) {
       assessment.is_archived = true;
       await this.assessmentsRepository.save(assessment);
+    } else {
+      throw new NotFoundException('Assessment not found');
     }
   }
 
@@ -66,6 +69,8 @@ export class AssessmentService {
     });
     if (assessment) {
       await this.assessmentsRepository.delete(id);
+    } else {
+      throw new NotFoundException('Assessment not found');
     }
   }
 }

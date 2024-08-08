@@ -27,6 +27,6 @@ export class CreateAssessmentsDto {
   @IsBoolean()
   is_archived: boolean;
 
-  @IsInt()
+  @IsOptional()
   created_by: number;
 }

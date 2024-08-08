@@ -51,8 +51,13 @@ export class UsersHrController extends BaseController {
   async createAssessment(
     @Body() createAssessmentDto: CreateAssessmentsDto,
     @Res() res: Response,
+    @Request() req,
   ) {
-    await this.assessmentService.checkOrCreateAssessment(createAssessmentDto);
+    const userId = req.user.id;
+    await this.assessmentService.checkOrCreateAssessment(
+      createAssessmentDto,
+      userId,
+    );
     return this.successResponse(
       {
         message: 'Assessment created',
