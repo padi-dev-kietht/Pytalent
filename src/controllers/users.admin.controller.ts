@@ -21,6 +21,18 @@ export class UsersAdminController extends BaseController {
     super();
   }
 
+  @Post('/hr/games/add')
+  @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.ADMIN]))
+  async addGamesToHr(@Res() res: Response, @Request() req) {
+    await this.usersService.addGamesToHr(req.body.id, req.body.gameIds);
+    return this.successResponse(
+      {
+        message: 'Success',
+      },
+      res,
+    );
+  }
+
   @Post('/hr/create')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.ADMIN]))
   async create(

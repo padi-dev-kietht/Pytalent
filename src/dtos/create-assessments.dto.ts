@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Exists } from '../shared/decorator/exists.decorator';
 import { Assessments } from '../entities/assessments.entity';
 
@@ -24,7 +18,7 @@ export class CreateAssessmentsDto {
   @IsOptional()
   end_date: Date;
 
-  @IsBoolean()
+  @IsOptional()
   is_archived: boolean;
 
   @IsOptional()

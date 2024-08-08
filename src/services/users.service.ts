@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Users } from '@entities/users.entity';
 import { plainToClass } from 'class-transformer';
@@ -8,11 +8,17 @@ import {
 } from '@interfaces/user.interface';
 import { RoleEnum } from '@enum/role.enum';
 import { UsersRepository } from '../repositories/user.repository';
+import { Games } from '../entities/games.entity';
+import { GamesRepository } from '../repositories/game.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(
+    private gamesRepository: GamesRepository,
+    private usersRepository: UsersRepository,
+  ) {}
 
+  // ADMIN
   async checkOrCreateHr(params: FindUserInterface): Promise<Users> {
     let user: Users = await this.usersRepository.findOne({
       where: {
@@ -38,5 +44,22 @@ export class UsersService {
     } else {
       throw new Error('User not found');
     }
+  }
+
+  async addGamesToHr(id: number, gameIds: number[]) {
+    const hr: Users = await this.usersRepository.findOne({
+      where: { id, role: RoleEnum.HR },
+    });
+    if (!hr) {
+      throw new NotFoundException('User not found');
+    }
+
+    const games: Games[] = await this.gamesRepository.findByIds(gameIds);
+    if (!games.length) {
+      throw new NotFoundException('Games not found');
+    }
+
+    hr.games = games;
+    await this.usersRepository.save(hr);
   }
 }
