@@ -15,10 +15,14 @@ import { AuthorizationGuard } from '@guards/authorization.guard';
 import { RoleEnum } from '@enum/role.enum';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { BaseController } from './base.controller';
+import { AssessmentService } from '../services/assessment.service';
 
 @Controller('admin/users')
 export class UsersAdminController extends BaseController {
-  constructor(private readonly usersService: UsersService) {
+  constructor(
+    private readonly assessmentService: AssessmentService,
+    private readonly usersService: UsersService,
+  ) {
     super();
   }
 
@@ -57,6 +61,18 @@ export class UsersAdminController extends BaseController {
     return this.successResponse(
       {
         message: 'Success',
+      },
+      res,
+    );
+  }
+
+  @Get('/hr/assessments')
+  @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
+  async getAllAssessments(@Res() res: Response) {
+    const assessments = await this.assessmentService.getAllAssessments();
+    return this.successResponse(
+      {
+        data: assessments,
       },
       res,
     );

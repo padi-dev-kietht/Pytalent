@@ -63,25 +63,30 @@ export class UsersHrController extends BaseController {
     );
   }
 
-  @Get('/assessments')
+  @Get('/assessments/:id')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
-  async getAllAssessments(@Res() res: Response) {
-    const assessments = await this.assessmentService.getAllAssessments();
+  async getAssessmentById(id: number, @Res() res: Response, @Request() req) {
+    const assessment = await this.assessmentService.getAssessmentById(
+      id,
+      req.user.id,
+    );
     return this.successResponse(
       {
-        data: assessments,
+        data: assessment,
       },
       res,
     );
   }
 
-  @Get('/assessments/:id')
+  @Get('/assessments')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
-  async getAssessmentById(id: number, @Res() res: Response) {
-    const assessment = await this.assessmentService.getAssessmentById(id);
+  async getAllAssessmentByHrId(@Res() res: Response, @Request() req) {
+    const assessments = await this.assessmentService.getAllAssessmentByHrId(
+      req.user.id,
+    );
     return this.successResponse(
       {
-        data: assessment,
+        data: assessments,
       },
       res,
     );

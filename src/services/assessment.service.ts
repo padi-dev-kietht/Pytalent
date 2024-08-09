@@ -139,13 +139,24 @@ export class AssessmentService {
     return assessments;
   }
 
-  async getAssessmentById(id: number): Promise<Assessments> {
+  async getAssessmentById(id: number, hr_id: number): Promise<Assessments> {
     const assessment: Assessments = await this.assessmentsRepository.findOne({
-      where: { id },
+      relations: ['created_by_hr'],
+      where: { id, created_by: hr_id },
     });
     if (!assessment) {
       throw new Error('Assessment not found');
     }
     return assessment;
+  }
+
+  async getAllAssessmentByHrId(hr_id: number): Promise<Assessments[]> {
+    const assessments: Assessments[] = await this.assessmentsRepository.find({
+      where: { created_by: hr_id },
+    });
+    if (!assessments) {
+      throw new Error('Assessments not found');
+    }
+    return assessments;
   }
 }
