@@ -116,4 +116,24 @@ export class UsersHrController extends BaseController {
       res,
     );
   }
+
+  @Patch('/assessments/update/:id')
+  @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
+  async updateAssessment(
+    @Request() req,
+    @Body() createAssessmentDto: CreateAssessmentsDto,
+    @Res() res: Response,
+  ) {
+    await this.assessmentService.updateAssessment(
+      Number(req.params.id),
+      createAssessmentDto,
+      req.user.id,
+    );
+    return this.successResponse(
+      {
+        message: 'Assessment updated',
+      },
+      res,
+    );
+  }
 }

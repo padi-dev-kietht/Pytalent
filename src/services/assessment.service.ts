@@ -52,24 +52,6 @@ export class AssessmentService {
     return assessment;
   }
 
-  async getAllAssessments(): Promise<Assessments[]> {
-    const assessments: Assessments[] = await this.assessmentsRepository.find();
-    if (!assessments) {
-      throw new Error('Assessments not found');
-    }
-    return assessments;
-  }
-
-  async getAssessmentById(id: number): Promise<Assessments> {
-    const assessment: Assessments = await this.assessmentsRepository.findOne({
-      where: { id },
-    });
-    if (!assessment) {
-      throw new Error('Assessment not found');
-    }
-    return assessment;
-  }
-
   async archiveAssessment(id: number, hr_id: number) {
     const assessment: Assessments = await this.assessmentsRepository.findOne({
       relations: ['created_by_hr'],
@@ -103,5 +85,67 @@ export class AssessmentService {
     } else {
       throw new NotFoundException('Assessment not found');
     }
+  }
+
+  async updateAssessment(
+    id: number,
+    params: FindOrCreateAssessmentInterface,
+    hr_id: number,
+  ) {
+    const assessment: Assessments = await this.assessmentsRepository.findOne({
+      relations: ['created_by_hr'],
+      where: { id },
+    });
+    if (assessment.created_by !== hr_id) {
+      throw new ConflictException(
+        'You are not allowed to update this assessment',
+      );
+    }
+    if (assessment) {
+      const paramUpdate: FindOrCreateAssessmentInterface = plainToClass(
+        Assessments,
+        {
+          name: params.name,
+          description: params.description,
+          start_date: params.start_date,
+          end_date: params.end_date,
+          is_archived: params.is_archived,
+          created_by: hr_id,
+        },
+      );
+
+      // Validation
+      if (paramUpdate.start_date > paramUpdate.end_date) {
+        throw new ConflictException('Start date must be before end date');
+      }
+      if (moment(paramUpdate.start_date).toDate() < new Date()) {
+        throw new ConflictException('Start date must be in the future');
+      }
+      if (moment(paramUpdate.end_date).toDate() < new Date()) {
+        throw new ConflictException('End date must be in the future');
+      }
+
+      await this.assessmentsRepository.update(id, paramUpdate);
+    } else {
+      throw new NotFoundException('Assessment not found');
+    }
+  }
+
+  async getAllAssessments(): Promise<Assessments[]> {
+    const assessments: Assessments[] = await this.assessmentsRepository.find();
+    if (!assessments) {
+      throw new Error('Assessments not found');
+    }
+    return assessments;
+  }
+
+  async getAssessmentById(id: number): Promise<Assessments> {
+    const assessment: Assessments = await this.assessmentsRepository.findOne({
+      where: { id },
+    });
+    if (!assessment) {
+      throw new Error('Assessment not found');
+    }
+    return assessment;
   }
 }
