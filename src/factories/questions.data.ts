@@ -74,8 +74,8 @@ export const questions = [
   {
     statement_one: 'All mammals have fur.',
     statement_two: 'A lion is a mammal.',
-    conclusion: 'A lion has fur.',
-    is_conclusion_correct: true,
+    conclusion: 'A lion has no fur.',
+    is_conclusion_correct: false,
   },
   {
     statement_one: 'All birds have beaks.',

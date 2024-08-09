@@ -48,6 +48,6 @@ export class createLogicalQuestionsTable1722841266235
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('questions');
+    await queryRunner.dropTable('logical_questions');
   }
 }
