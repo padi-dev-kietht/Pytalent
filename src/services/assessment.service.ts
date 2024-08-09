@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { Assessments } from '../entities/assessments.entity';
 import { AssessmentsRepository } from '../repositories/assessment.repository';
 import { FindOrCreateAssessmentInterface } from '../shared/interfaces/assessment.interface';
+import * as moment from 'moment';
 
 @Injectable()
 export class AssessmentService {
@@ -15,6 +20,7 @@ export class AssessmentService {
     let assessment: Assessments = await this.assessmentsRepository.findOne({
       where: { name: params.name },
     });
+    const current = new Date();
     if (!assessment) {
       const paramCreate: FindOrCreateAssessmentInterface = plainToClass(
         Assessments,
@@ -27,6 +33,19 @@ export class AssessmentService {
           created_by: userId,
         },
       );
+
+      // Validation
+      if (paramCreate.start_date > paramCreate.end_date) {
+        throw new ConflictException('Start date must be before end date');
+      }
+      if (moment(paramCreate.start_date).toDate() < current) {
+        throw new ConflictException('Start date must be in the future');
+      }
+      if (moment(paramCreate.end_date).toDate() < current) {
+        throw new ConflictException('End date must be in the future');
+      }
+
+      // Create assessment
       assessment = await this.assessmentsRepository.create(paramCreate);
       await this.assessmentsRepository.save(assessment);
     }
