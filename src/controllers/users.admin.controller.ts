@@ -26,6 +26,7 @@ export class UsersAdminController extends BaseController {
     super();
   }
 
+  // Adding games to a HR
   @Post('/hr/games/add')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.ADMIN]))
   async addGamesToHr(@Res() res: Response, @Request() req) {
@@ -38,6 +39,7 @@ export class UsersAdminController extends BaseController {
     );
   }
 
+  // Creating a HR
   @Post('/hr/create')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.ADMIN]))
   async create(
@@ -54,6 +56,7 @@ export class UsersAdminController extends BaseController {
     );
   }
 
+  // Deleting a HR
   @Delete('/hr/delete/:id')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.ADMIN]))
   async delete(@Request() req, @Res() res: Response) {

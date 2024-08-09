@@ -27,6 +27,7 @@ export class UsersHrController extends BaseController {
     super();
   }
 
+  // Creating an assessment
   @Post('/assessments/create')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
   async createAssessment(
@@ -47,6 +48,7 @@ export class UsersHrController extends BaseController {
     );
   }
 
+  // Adding games to an assessment
   @Post('/assessments/:id/add-games')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
   async addGamesToAssessment(@Request() req, @Res() res: Response) {
@@ -63,6 +65,7 @@ export class UsersHrController extends BaseController {
     );
   }
 
+  // Getting an assessment by ID
   @Get('/assessments/:id')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
   async getAssessmentById(id: number, @Res() res: Response, @Request() req) {
@@ -78,6 +81,7 @@ export class UsersHrController extends BaseController {
     );
   }
 
+  // Getting all assessments
   @Get('/assessments')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
   async getAllAssessmentByHrId(@Res() res: Response, @Request() req) {
@@ -92,6 +96,7 @@ export class UsersHrController extends BaseController {
     );
   }
 
+  // Deleting an assessment
   @Delete('/assessments/delete/:id')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
   async deleteAssessment(@Request() req, @Res() res: Response) {
@@ -107,6 +112,7 @@ export class UsersHrController extends BaseController {
     );
   }
 
+  // Archiving an assessment
   @Patch('/assessments/archive/:id')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
   async archiveAssessment(@Request() req, @Res() res: Response) {
@@ -122,6 +128,7 @@ export class UsersHrController extends BaseController {
     );
   }
 
+  // Updating an assessment
   @Patch('/assessments/update/:id')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
   async updateAssessment(
