@@ -87,13 +87,16 @@ export class UsersService {
     if (assessment.created_by !== user_id) {
       throw new NotFoundException('You are not the owner of this assessment');
     }
+
+    const placeholders = gameIds.map(() => '?').join(', ');
     const allowedGames = await this.usersRepository.query(
       `SELECT user_id, game_id 
-       FROM hr_games 
-       WHERE user_id = ? AND game_id IN (?)`,
-      [user_id, gameIds],
+        FROM hr_games 
+        WHERE user_id = ? AND game_id IN (${placeholders})`,
+      [user_id, ...gameIds],
     );
-    if (allowedGames.length === 0) {
+
+    if (!allowedGames) {
       throw new NotFoundException('You are not allowed to add these games');
     }
 
