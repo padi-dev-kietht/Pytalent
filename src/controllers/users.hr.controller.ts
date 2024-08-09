@@ -90,7 +90,10 @@ export class UsersHrController extends BaseController {
   @Delete('/assessments/delete/:id')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
   async deleteAssessment(@Request() req, @Res() res: Response) {
-    await this.assessmentService.deleteAssessment(Number(req.params.id));
+    await this.assessmentService.deleteAssessment(
+      Number(req.params.id),
+      req.user.id,
+    );
     return this.successResponse(
       {
         message: 'Assessment deleted',
@@ -102,7 +105,10 @@ export class UsersHrController extends BaseController {
   @Patch('/assessments/archive/:id')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
   async archiveAssessment(@Request() req, @Res() res: Response) {
-    await this.assessmentService.archiveAssessment(Number(req.params.id));
+    await this.assessmentService.archiveAssessment(
+      Number(req.params.id),
+      req.user.id,
+    );
     return this.successResponse(
       {
         message: 'Assessment archived',

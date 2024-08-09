@@ -70,10 +70,16 @@ export class AssessmentService {
     return assessment;
   }
 
-  async archiveAssessment(id: number) {
+  async archiveAssessment(id: number, hr_id: number) {
     const assessment: Assessments = await this.assessmentsRepository.findOne({
+      relations: ['created_by_hr'],
       where: { id },
     });
+    if (assessment.created_by !== hr_id) {
+      throw new ConflictException(
+        'You are not allowed to archive this assessment',
+      );
+    }
     if (assessment) {
       assessment.is_archived = true;
       await this.assessmentsRepository.save(assessment);
@@ -82,10 +88,16 @@ export class AssessmentService {
     }
   }
 
-  async deleteAssessment(id: number) {
+  async deleteAssessment(id: number, hr_id: number) {
     const assessment: Assessments = await this.assessmentsRepository.findOne({
+      relations: ['created_by_hr'],
       where: { id },
     });
+    if (assessment.created_by !== hr_id) {
+      throw new ConflictException(
+        'You are not allowed to delete this assessment',
+      );
+    }
     if (assessment) {
       await this.assessmentsRepository.delete(id);
     } else {

@@ -54,7 +54,7 @@ export class UsersService {
       where: { id, role: RoleEnum.HR },
     });
     if (!hr) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Hr not found');
     }
 
     const games: Games[] = await this.gamesRepository.findByIds(gameIds);
@@ -87,13 +87,13 @@ export class UsersService {
     if (assessment.created_by !== user_id) {
       throw new NotFoundException('You are not the owner of this assessment');
     }
-    const allowedGame = await this.usersRepository.query(
+    const allowedGames = await this.usersRepository.query(
       `SELECT user_id, game_id 
        FROM hr_games 
        WHERE user_id = ? AND game_id IN (?)`,
       [user_id, gameIds],
     );
-    if (allowedGame.length === 0) {
+    if (allowedGames.length === 0) {
       throw new NotFoundException('You are not allowed to add these games');
     }
 
