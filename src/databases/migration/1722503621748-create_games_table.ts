@@ -14,7 +14,7 @@ export class createGamesTable1722503621748 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'name',
+            name: 'game_type',
             type: 'varchar(255)',
           },
           {

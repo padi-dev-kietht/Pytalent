@@ -10,14 +10,15 @@ import { Assessments } from './assessments.entity';
 import { AssessmentsResult } from './assessments_result.entity';
 import { Users } from './users.entity';
 import { GameResult } from './game_result.entity';
+import { GameTypeEnum } from '../common/enum/game-type.enum';
 
 @Entity()
 export class Games extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar' })
-  name: string;
+  @Column({ type: 'enum' })
+  game_type: GameTypeEnum;
 
   @Column({ type: 'text' })
   description: string;
