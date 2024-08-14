@@ -103,4 +103,21 @@ export class UsersService {
     assessment.games = games;
     await this.assessmentsRepository.save(assessment);
   }
+
+  async checkOrCreateCandidate(params: FindUserInterface): Promise<Users> {
+    let user: Users = await this.usersRepository.findOne({
+      where: {
+        email: params.email,
+      },
+    });
+    if (!user) {
+      const paramCreate: createUserInterface = plainToClass(Users, {
+        email: params.email,
+        role: RoleEnum.CANDIDATE,
+      });
+      user = await this.usersRepository.create(paramCreate);
+      await this.usersRepository.save(user);
+    }
+    return user;
+  }
 }
