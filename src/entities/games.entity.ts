@@ -17,7 +17,7 @@ export class Games extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'enum' })
+  @Column()
   game_type: GameTypeEnum;
 
   @Column({ type: 'text' })
