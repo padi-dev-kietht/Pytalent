@@ -3,7 +3,9 @@ import * as bcrypt from 'bcrypt';
 import { Users } from '@entities/users.entity';
 import { plainToClass } from 'class-transformer';
 import {
+  createCandidateInterface,
   createUserInterface,
+  FindCandidateInterface,
   FindUserInterface,
 } from '@interfaces/user.interface';
 import { RoleEnum } from '@enum/role.enum';
@@ -12,6 +14,10 @@ import { Games } from '../entities/games.entity';
 import { GamesRepository } from '../repositories/game.repository';
 import { Assessments } from '../entities/assessments.entity';
 import { AssessmentsRepository } from '../repositories/assessment.repository';
+import { InviteCandidateDto } from '../dtos/invite-candidate.dto';
+import { InvitationStatusEnum } from '../common/enum/invitation-status.enum';
+import { InvitationsRepository } from '../repositories/invitation.repository';
+import { MailService } from '../common/lib/mail/mail.lib';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +25,8 @@ export class UsersService {
     private gamesRepository: GamesRepository,
     private usersRepository: UsersRepository,
     private assessmentsRepository: AssessmentsRepository,
+    private invitationsRepository: InvitationsRepository,
+    private mailService: MailService,
   ) {}
 
   // ADMIN
@@ -104,14 +112,14 @@ export class UsersService {
     await this.assessmentsRepository.save(assessment);
   }
 
-  async checkOrCreateCandidate(params: FindUserInterface): Promise<Users> {
+  async checkOrCreateCandidate(params: FindCandidateInterface): Promise<Users> {
     let user: Users = await this.usersRepository.findOne({
       where: {
         email: params.email,
       },
     });
     if (!user) {
-      const paramCreate: createUserInterface = plainToClass(Users, {
+      const paramCreate: createCandidateInterface = plainToClass(Users, {
         email: params.email,
         role: RoleEnum.CANDIDATE,
       });
@@ -119,5 +127,41 @@ export class UsersService {
       await this.usersRepository.save(user);
     }
     return user;
+  }
+
+  async inviteCandidate(inviteCandidateDto: InviteCandidateDto): Promise<void> {
+    const { email, assessment_id } = inviteCandidateDto;
+
+    // Check if the candidate already exists
+    let candidate: Users = await this.usersRepository.findOne({
+      where: { email, role: RoleEnum.CANDIDATE },
+    });
+    if (!candidate) {
+      candidate = await this.checkOrCreateCandidate({ email });
+    }
+
+    // Check if the assessment exists
+    const assessment: Assessments = await this.assessmentsRepository.findOne({
+      where: { id: assessment_id },
+    });
+    if (!assessment) {
+      throw new Error('Assessment not found');
+    }
+
+    // Create an invitation
+    const invitation = this.invitationsRepository.create({
+      candidate_id: candidate.id,
+      assessment_id: assessment.id,
+      status: InvitationStatusEnum.PENDING,
+    });
+    await this.invitationsRepository.save(invitation);
+
+    // Send an email with the invitation link
+    const invitationLink = `http://localhost:3000/hr/invite/${invitation.id}`;
+    await this.mailService
+      .to(email)
+      .subject('You are invited to participate in an assessment')
+      .text(`Please click the following link to participate: ${invitationLink}`)
+      .send();
   }
 }

@@ -10,7 +10,15 @@ export interface FindUserInterface {
   password: string;
 }
 
+export interface FindCandidateInterface {
+  email: string;
+}
+
 export interface createUserInterface extends FindUserInterface {
+  role: RoleEnum;
+}
+
+export interface createCandidateInterface extends FindCandidateInterface {
   role: RoleEnum;
 }
 

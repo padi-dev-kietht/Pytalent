@@ -17,6 +17,7 @@ import { CreateAssessmentsDto } from '../dtos/create-assessments.dto';
 import { AssessmentService } from '../services/assessment.service';
 import { BaseController } from './base.controller';
 import { UsersService } from '../services/users.service';
+import { InviteCandidateDto } from '../dtos/invite-candidate.dto';
 
 @Controller('hr')
 export class UsersHrController extends BaseController {
@@ -144,6 +145,23 @@ export class UsersHrController extends BaseController {
     return this.successResponse(
       {
         message: 'Assessment updated',
+      },
+      res,
+    );
+  }
+
+  //Inviting a candidate
+  @Post('/invite')
+  @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
+  async inviteCandidate(
+    @Request() req,
+    @Res() res: Response,
+    @Body() inviteCandidateDto: InviteCandidateDto,
+  ) {
+    await this.usersService.inviteCandidate(inviteCandidateDto);
+    return this.successResponse(
+      {
+        message: 'Candidate invited',
       },
       res,
     );

@@ -10,7 +10,7 @@ export default class CreateGames implements Seeder {
         id: 1,
         game_type: GameTypeEnum.LOGICAL,
         description:
-          '3 entities and their relationships are shown in 2 statement, choose the conclusion that is inferred from the 2 statements',
+          '3 entities and their relationships are shown in 2 statements, choose the conclusion that is inferred from the 2 statements',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },
