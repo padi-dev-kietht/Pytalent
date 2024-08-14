@@ -7,8 +7,4 @@ export class AssessmentsRepository extends Repository<AssessmentsEntity> {
   constructor(private dataSource: DataSource) {
     super(AssessmentsEntity, dataSource.createEntityManager());
   }
-
-  async findAllAssessments(): Promise<any> {
-    return await this.find();
-  }
 }

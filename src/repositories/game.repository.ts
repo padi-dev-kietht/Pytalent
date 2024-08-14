@@ -7,8 +7,4 @@ export class GamesRepository extends Repository<GamesEntity> {
   constructor(private dataSource: DataSource) {
     super(GamesEntity, dataSource.createEntityManager());
   }
-
-  async findAllGames(): Promise<any> {
-    return await this.find();
-  }
 }
