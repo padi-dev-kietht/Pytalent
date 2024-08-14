@@ -1,4 +1,11 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { GameAnswer } from './game_answer.entity';
 
 @Entity()
 export class LogicalQuestions extends BaseEntity {
@@ -16,4 +23,7 @@ export class LogicalQuestions extends BaseEntity {
 
   @Column({ type: 'boolean' })
   is_conclusion_correct: boolean;
+
+  @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.question)
+  game_answers: GameAnswer[];
 }

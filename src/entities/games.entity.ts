@@ -11,6 +11,7 @@ import { AssessmentsResult } from './assessments_result.entity';
 import { Users } from './users.entity';
 import { GameResult } from './game_result.entity';
 import { GameTypeEnum } from '../common/enum/game-type.enum';
+import { GameAnswer } from './game_answer.entity';
 
 @Entity()
 export class Games extends BaseEntity {
@@ -32,6 +33,9 @@ export class Games extends BaseEntity {
 
   @OneToMany(() => GameResult, (result: GameResult) => result.game)
   game_results: GameResult[];
+
+  @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.game)
+  game_answers: GameAnswer[];
 
   @ManyToMany(() => Assessments, (assessment: Assessments) => assessment.games)
   assessments: Assessments[];
