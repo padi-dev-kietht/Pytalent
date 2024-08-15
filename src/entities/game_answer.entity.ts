@@ -17,10 +17,10 @@ export class GameAnswer extends BaseEntity {
   @Column({ type: 'integer' })
   game_id: number;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'integer', nullable: true })
   question_id: number;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'integer', nullable: true })
   level_id: number;
 
   @Column({ type: 'text' })

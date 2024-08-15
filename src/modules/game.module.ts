@@ -4,9 +4,15 @@ import { GamesEntity } from '../entities';
 import { GamesController } from '../controllers/game.controller';
 import { GamesService } from '../services/game.service';
 import { GamesRepository } from '../repositories/game.repository';
+import { GameAnswerModule } from './gameAnswer.module';
+import { LogicalQuestionsModule } from './logicalQuestion.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([GamesEntity])],
+  imports: [
+    TypeOrmModule.forFeature([GamesEntity]),
+    GameAnswerModule,
+    LogicalQuestionsModule,
+  ],
   controllers: [GamesController],
   providers: [GamesService, GamesRepository],
   exports: [GamesService, GamesRepository],

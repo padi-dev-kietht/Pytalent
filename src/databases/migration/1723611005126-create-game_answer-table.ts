@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class createGameAnswerTable1723611005126 implements MigrationInterface {
   name = 'createGameAnswerTable1723611005126';
@@ -51,6 +56,27 @@ export class createGameAnswerTable1723611005126 implements MigrationInterface {
         ],
       }),
     );
+
+    await queryRunner.createForeignKeys('game_answer', [
+      new TableForeignKey({
+        columnNames: ['game_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'games',
+        onDelete: 'CASCADE',
+      }),
+      new TableForeignKey({
+        columnNames: ['question_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'logical_questions',
+        onDelete: 'CASCADE',
+      }),
+      new TableForeignKey({
+        columnNames: ['level_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'memory_game_level',
+        onDelete: 'CASCADE',
+      }),
+    ]);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

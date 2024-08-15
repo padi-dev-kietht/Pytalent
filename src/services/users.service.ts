@@ -145,7 +145,7 @@ export class UsersService {
       where: { id: assessment_id },
     });
     if (!assessment) {
-      throw new Error('Assessment not found');
+      throw new NotFoundException('Assessment not found');
     }
 
     // Create an invitation
