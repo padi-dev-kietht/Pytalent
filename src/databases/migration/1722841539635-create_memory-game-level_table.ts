@@ -1,14 +1,12 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class createMemoryGameLevelTable1722841539635
-  implements MigrationInterface
-{
-  name = 'createMemoryGameLevelTable1722841539635';
+export class createMemoryGameTable1722841539635 implements MigrationInterface {
+  name = 'createMemoryGameTable1722841539635';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'memory_game_level',
+        name: 'memory_game',
         columns: [
           {
             name: 'id',
@@ -34,6 +32,10 @@ export class createMemoryGameLevelTable1722841539635
             type: 'integer',
           },
           {
+            name: 'patterns',
+            type: 'simple-array',
+          },
+          {
             name: 'created_at',
             type: 'datetime',
           },
@@ -48,6 +50,6 @@ export class createMemoryGameLevelTable1722841539635
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('memory_game_levels');
+    await queryRunner.dropTable('memory_game');
   }
 }

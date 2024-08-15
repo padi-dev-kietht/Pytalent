@@ -5,7 +5,6 @@ export { Games as GamesEntity } from './games.entity';
 export { Assessments as AssessmentsEntity } from './assessments.entity';
 export { AssessmentsResult as AssessmentsResultEntity } from './assessments_result.entity';
 export { LogicalQuestions as LogicalQuestionsEntity } from './logical_questions.entity';
-export { MemoryGameLevel as MemoryGameLevelEntity } from './memory_game_level.entity';
-export { MemoryGamePattern as MemoryGamePatternEntity } from './memory_game_pattern.entity';
+export { MemoryGame as MemoryGameEntity } from './memory_game.entity';
 export { GameResult as GameResultEntity } from './game_result.entity';
 export { GameAnswer as GameAnswerEntity } from './game_answer.entity';

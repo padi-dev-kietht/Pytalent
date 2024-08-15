@@ -2,8 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { LogicalQuestionsRepository } from '../repositories/logicalQuestion.repository';
 import { GamesRepository } from '../repositories/game.repository';
 import { GameAnswerRepository } from '../repositories/gameAnswer.repository';
-import { Games } from '../entities/games.entity';
 import { GameAnswer } from '../entities/game_answer.entity';
+import { LogicalQuestions } from '../entities/logical_questions.entity';
+import { MemoryGameRepository } from '../repositories/memoryGame.repository';
 
 @Injectable()
 export class GamesService {
@@ -11,13 +12,58 @@ export class GamesService {
     private gamesRepository: GamesRepository,
     private gameAnswerRepository: GameAnswerRepository,
     private logicalQuestionsRepository: LogicalQuestionsRepository,
+    private memoryRepository: MemoryGameRepository,
   ) {}
 
-  async getGameById(id: number): Promise<Games> {
-    return this.gamesRepository.findOne({
-      where: { id },
-      relations: ['gameAnswers'],
-    });
+  // Logical Questions Game
+  async getRandomQuestions(): Promise<LogicalQuestions[]> {
+    const questions = await this.logicalQuestionsRepository.find();
+    const yesQuestions = questions.filter((q) => q.is_conclusion_correct);
+    const noQuestions = questions.filter((q) => !q.is_conclusion_correct);
+
+    const selectedQuestions = [];
+    for (let i = 0; i < 10; i++) {
+      selectedQuestions.push(
+        yesQuestions.splice(
+          Math.floor(Math.random() * yesQuestions.length),
+          1,
+        )[0],
+      );
+      selectedQuestions.push(
+        noQuestions.splice(
+          Math.floor(Math.random() * noQuestions.length),
+          1,
+        )[0],
+      );
+    }
+
+    const sortedQuestions = [];
+    let trueCount = 0;
+    let falseCount = 0;
+
+    while (selectedQuestions.length > 0) {
+      const randomIndex = Math.floor(Math.random() * selectedQuestions.length);
+      const question = selectedQuestions.splice(randomIndex, 1)[0];
+      if (question.is_conclusion_correct) {
+        if (trueCount <= 3) {
+          sortedQuestions.push(question);
+          trueCount++;
+          if (trueCount === 3) {
+            falseCount = 0;
+          }
+        }
+      } else {
+        if (falseCount <= 3) {
+          sortedQuestions.push(question);
+          falseCount++;
+          if (falseCount === 3) {
+            trueCount = 0;
+          }
+        }
+      }
+    }
+
+    return sortedQuestions;
   }
 
   async submitGameAnswer(
@@ -48,4 +94,6 @@ export class GamesService {
 
     return this.gameAnswerRepository.save(gameAnswer);
   }
+
+  //Memory Game
 }

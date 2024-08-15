@@ -10,9 +10,15 @@ export class GamesController extends BaseController {
     super();
   }
 
-  @Get(':id')
-  async getGameById(id: number) {
-    return this.gameService.getGameById(id);
+  // @Get(':id')
+  // async getGameById(id: number) {
+  //   return this.gameService.getGameById(id);
+  // }
+
+  @Post(':id/start')
+  async startLogicalQuestionsGame(@Param('id') gameId: number): Promise<any> {
+    const q = await this.gameService.getRandomQuestions();
+    return q;
   }
 
   @Post(':id/submit-answer')

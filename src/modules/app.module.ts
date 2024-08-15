@@ -25,8 +25,7 @@ import { GameResult } from '../entities/game_result.entity';
 import { UsersHrController } from '../controllers/users.hr.controller';
 import { GameAnswer } from '../entities/game_answer.entity';
 import { LogicalQuestions } from '../entities/logical_questions.entity';
-import { MemoryGameLevel } from '../entities/memory_game_level.entity';
-import { MemoryGamePattern } from '../entities/memory_game_pattern.entity';
+import { MemoryGame } from '../entities/memory_game.entity';
 // import { GraphQLModule } from '@nestjs/graphql';
 // import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 // import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
@@ -50,8 +49,7 @@ const options = databaseConfig as TypeOrmModuleOptions;
       GameResult,
       GameAnswer,
       LogicalQuestions,
-      MemoryGameLevel,
-      MemoryGamePattern,
+      MemoryGame,
     ]),
 
     TypeOrmModule.forRoot({

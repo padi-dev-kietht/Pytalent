@@ -6,12 +6,14 @@ import { GamesService } from '../services/game.service';
 import { GamesRepository } from '../repositories/game.repository';
 import { GameAnswerModule } from './gameAnswer.module';
 import { LogicalQuestionsModule } from './logicalQuestion.module';
+import { MemoryGameModule } from './memoryGame.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([GamesEntity]),
     GameAnswerModule,
     LogicalQuestionsModule,
+    MemoryGameModule,
   ],
   controllers: [GamesController],
   providers: [GamesService, GamesRepository],
