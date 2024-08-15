@@ -73,7 +73,7 @@ export class createGameAnswerTable1723611005126 implements MigrationInterface {
       new TableForeignKey({
         columnNames: ['level_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'memory_game_level',
+        referencedTableName: 'memory_game',
         onDelete: 'CASCADE',
       }),
     ]);

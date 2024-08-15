@@ -27,7 +27,7 @@ export class GamesController extends BaseController {
       return q;
     }
     if (game.game_type === 'memory') {
-      const d = await this.gameService.getMemoryGameDetails(1);
+      const d = await this.gameService.getMemoryGameDetails(25);
       return d;
     }
   }

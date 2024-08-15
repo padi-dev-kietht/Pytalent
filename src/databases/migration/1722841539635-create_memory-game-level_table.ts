@@ -33,7 +33,7 @@ export class createMemoryGameTable1722841539635 implements MigrationInterface {
           },
           {
             name: 'patterns',
-            type: 'simple-array',
+            type: 'array',
           },
           {
             name: 'created_at',
