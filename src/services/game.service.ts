@@ -5,6 +5,7 @@ import { GameAnswerRepository } from '../repositories/gameAnswer.repository';
 import { GameAnswer } from '../entities/game_answer.entity';
 import { LogicalQuestions } from '../entities/logical_questions.entity';
 import { MemoryGameRepository } from '../repositories/memoryGame.repository';
+import { MemoryGame } from '../entities/memory_game.entity';
 
 @Injectable()
 export class GamesService {
@@ -12,7 +13,7 @@ export class GamesService {
     private gamesRepository: GamesRepository,
     private gameAnswerRepository: GameAnswerRepository,
     private logicalQuestionsRepository: LogicalQuestionsRepository,
-    private memoryRepository: MemoryGameRepository,
+    private memoryGameRepository: MemoryGameRepository,
   ) {}
 
   // Logical Questions Game
@@ -96,4 +97,26 @@ export class GamesService {
   }
 
   //Memory Game
+  generatePatterns(count: number): string[] {
+    const directions = ['left', 'right'];
+    return Array.from(
+      { length: count },
+      () => directions[Math.floor(Math.random() * directions.length)],
+    );
+  }
+
+  async getMemoryGameDetails(level: number): Promise<MemoryGame> {
+    const number_of_patterns = level;
+    const display_time = level;
+    const input_time = level <= 2 ? 3 : level;
+    const patterns = this.generatePatterns(number_of_patterns);
+
+    return this.memoryGameRepository.save({
+      level,
+      number_of_patterns,
+      display_time,
+      input_time,
+      patterns,
+    });
+  }
 }

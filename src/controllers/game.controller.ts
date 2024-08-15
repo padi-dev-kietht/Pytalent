@@ -3,10 +3,14 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { BaseController } from './base.controller';
 import { GamesService } from '../services/game.service';
 import { GameAnswer } from '../entities/game_answer.entity';
+import { GamesRepository } from '../repositories/game.repository';
 
 @Controller('games')
 export class GamesController extends BaseController {
-  constructor(private gameService: GamesService) {
+  constructor(
+    private gameRepository: GamesRepository,
+    private gameService: GamesService,
+  ) {
     super();
   }
 
@@ -16,9 +20,16 @@ export class GamesController extends BaseController {
   // }
 
   @Post(':id/start')
-  async startLogicalQuestionsGame(@Param('id') gameId: number): Promise<any> {
-    const q = await this.gameService.getRandomQuestions();
-    return q;
+  async startGame(@Param('id') gameId: number): Promise<any> {
+    const game = await this.gameRepository.findOneBy({ id: gameId });
+    if (game.game_type === 'logical') {
+      const q = await this.gameService.getRandomQuestions();
+      return q;
+    }
+    if (game.game_type === 'memory') {
+      const d = await this.gameService.getMemoryGameDetails(1);
+      return d;
+    }
   }
 
   @Post(':id/submit-answer')
