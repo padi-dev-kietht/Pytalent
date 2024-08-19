@@ -47,6 +47,12 @@ export class Users extends BaseEntity {
   )
   assessments: Assessments[];
 
+  @OneToMany(
+    () => Assessments,
+    (assessment: Assessments) => assessment.candidate,
+  )
+  assessments_candidate: Assessments[];
+
   @ManyToMany(() => Games, (game: Games) => game.hrs)
   @JoinTable({
     name: 'hr_games',

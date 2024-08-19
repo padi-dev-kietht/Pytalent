@@ -164,4 +164,50 @@ export class UsersService {
       .text(`Please click the following link to participate: ${invitationLink}`)
       .send();
   }
+
+  async addCandidateToAssessment(
+    assessment_id: number,
+    candidate_id: number,
+    hr_id: number,
+  ) {
+    const assessment: Assessments = await this.assessmentsRepository.findOne({
+      where: { id: assessment_id },
+    });
+    if (!assessment) {
+      throw new NotFoundException('Assessment not found');
+    }
+
+    if (assessment.created_by !== hr_id) {
+      throw new NotFoundException('You are not the owner of this assessment');
+    }
+
+    const candidate: Users = await this.usersRepository.findOne({
+      where: { id: candidate_id, role: RoleEnum.CANDIDATE },
+    });
+    if (!candidate) {
+      throw new NotFoundException('Candidate not found');
+    }
+
+    assessment.candidate = candidate;
+    await this.assessmentsRepository.save(assessment);
+  }
+
+  // Candidate
+  async acceptInvitation(invitation_id: number): Promise<void> {
+    const invitation: any = await this.invitationsRepository.findOne({
+      where: { id: invitation_id, status: InvitationStatusEnum.PENDING },
+    });
+    if (!invitation) {
+      throw new NotFoundException('Invitation not found or already accepted');
+    }
+
+    invitation.status = InvitationStatusEnum.ACCEPTED;
+    await this.invitationsRepository.save(invitation);
+
+    await this.addCandidateToAssessment(
+      invitation.assessment_id,
+      invitation.candidate_id,
+      invitation.hr_id,
+    );
+  }
 }

@@ -39,6 +39,10 @@ export class createAssessmentsTable1722501299267 implements MigrationInterface {
             type: 'integer',
           },
           {
+            name: 'candidate_id',
+            type: 'integer',
+          },
+          {
             name: 'is_archived',
             type: 'boolean',
           },
@@ -55,14 +59,18 @@ export class createAssessmentsTable1722501299267 implements MigrationInterface {
       }),
     );
 
-    await queryRunner.createForeignKey(
-      'assessments',
+    await queryRunner.createForeignKeys('assessments', [
       new TableForeignKey({
         columnNames: ['created_by'],
         referencedTableName: 'users',
         referencedColumnNames: ['id'],
       }),
-    );
+      new TableForeignKey({
+        columnNames: ['candidate_id'],
+        referencedTableName: 'users',
+        referencedColumnNames: ['id'],
+      }),
+    ]);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

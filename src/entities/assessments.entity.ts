@@ -35,10 +35,17 @@ export class Assessments extends BaseEntity {
   @Column({ type: 'int' })
   created_by: number;
 
+  @Column({ type: 'int', nullable: true })
+  candidate_id: number;
+
   @Column({ type: 'boolean', default: false })
   is_archived: boolean;
 
   //Associations
+  @ManyToOne(() => Users, (candidate: Users) => candidate.assessments)
+  @JoinColumn({ name: 'candidate_id' })
+  candidate: Users;
+
   @OneToMany(
     () => Invitations,
     (invitation: Invitations) => invitation.assessment,
