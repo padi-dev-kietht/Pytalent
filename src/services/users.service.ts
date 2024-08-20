@@ -103,9 +103,16 @@ export class UsersService {
         WHERE user_id = ? AND game_id IN (${placeholders})`,
       [user_id, ...gameIds],
     );
+    const allowedGameIds = allowedGames.map((game) => game.game_id);
 
-    if (!allowedGames) {
-      throw new NotFoundException('You are not allowed to add these games');
+    // Check if all provided game IDs are included in the allowed games
+    const allGamesAllowed = gameIds.every((gameId) =>
+      allowedGameIds.includes(gameId),
+    );
+    if (!allGamesAllowed) {
+      throw new NotFoundException(
+        'You are not allowed to add some of these games',
+      );
     }
 
     assessment.games = games;
