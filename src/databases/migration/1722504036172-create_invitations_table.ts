@@ -48,12 +48,14 @@ export class createInvitationsTable1722504036172 implements MigrationInterface {
         columnNames: ['assessment_id'],
         referencedTableName: 'assessments',
         referencedColumnNames: ['id'],
+        onDelete: 'CASCADE',
       }),
 
       new TableForeignKey({
         columnNames: ['candidate_id'],
         referencedTableName: 'users',
         referencedColumnNames: ['id'],
+        onDelete: 'CASCADE',
       }),
     ]);
   }

@@ -24,6 +24,8 @@ export class LogicalQuestions extends BaseEntity {
   @Column({ type: 'boolean' })
   is_conclusion_correct: boolean;
 
-  @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.question)
+  @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.question, {
+    cascade: true,
+  })
   game_answers: GameAnswer[];
 }

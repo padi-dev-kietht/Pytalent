@@ -25,13 +25,16 @@ export class Invitations extends BaseEntity {
   candidate_id: number;
 
   // Associations
-  @ManyToOne(() => Users, (user: Users) => user.invitations)
+  @ManyToOne(() => Users, (user: Users) => user.invitations, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'candidate_id' })
   user: Users;
 
   @ManyToOne(
     () => Assessments,
     (assessment: Assessments) => assessment.invitations,
+    { onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: 'assessment_id' })
   assessment: Assessments;

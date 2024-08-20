@@ -45,12 +45,14 @@ export class createAssessmentsGamesTable1722503712826
         columnNames: ['assessment_id'],
         referencedTableName: 'assessments',
         referencedColumnNames: ['id'],
+        onDelete: 'CASCADE',
       }),
 
       new TableForeignKey({
         columnNames: ['game_id'],
         referencedTableName: 'games',
         referencedColumnNames: ['id'],
+        onDelete: 'CASCADE',
       }),
     ]);
   }

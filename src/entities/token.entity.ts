@@ -22,7 +22,7 @@ export class Token extends BaseEntity {
   @Column({ type: 'varchar' })
   type: string;
 
-  @ManyToOne(() => Users, (user: Users) => user.tokens)
+  @ManyToOne(() => Users, (user: Users) => user.tokens, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: Users;
 }

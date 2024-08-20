@@ -28,18 +28,27 @@ export class Games extends BaseEntity {
   @OneToMany(
     () => AssessmentsResult,
     (result: AssessmentsResult) => result.game,
+    { cascade: true },
   )
   assessment_results: AssessmentsResult[];
 
-  @OneToMany(() => GameResult, (result: GameResult) => result.game)
+  @OneToMany(() => GameResult, (result: GameResult) => result.game, {
+    cascade: true,
+  })
   game_results: GameResult[];
 
-  @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.game)
+  @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.game, {
+    cascade: true,
+  })
   game_answers: GameAnswer[];
 
-  @ManyToMany(() => Assessments, (assessment: Assessments) => assessment.games)
+  @ManyToMany(
+    () => Assessments,
+    (assessment: Assessments) => assessment.games,
+    { cascade: true },
+  )
   assessments: Assessments[];
 
-  @ManyToMany(() => Users, (hr: Users) => hr.games)
+  @ManyToMany(() => Users, (hr: Users) => hr.games, { cascade: true })
   hrs: Users[];
 }

@@ -44,12 +44,14 @@ export class createHrGamesTable1722504235561 implements MigrationInterface {
         columnNames: ['game_id'],
         referencedTableName: 'games',
         referencedColumnNames: ['id'],
+        onDelete: 'CASCADE',
       }),
 
       new TableForeignKey({
         columnNames: ['hr_id'],
         referencedTableName: 'users',
         referencedColumnNames: ['id'],
+        onDelete: 'CASCADE',
       }),
     ]);
   }

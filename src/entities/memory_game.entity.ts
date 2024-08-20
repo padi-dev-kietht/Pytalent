@@ -24,6 +24,8 @@ export class MemoryGame extends BaseEntity {
 
   // Associations
 
-  @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.level)
+  @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.level, {
+    cascade: true,
+  })
   game_answers: GameAnswer[];
 }

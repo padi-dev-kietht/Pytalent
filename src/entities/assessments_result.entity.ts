@@ -27,11 +27,17 @@ export class AssessmentsResult extends BaseEntity {
   completed_at: Date;
 
   //Associations
-  @ManyToOne(() => Assessments, (assessment: Assessments) => assessment.results)
+  @ManyToOne(
+    () => Assessments,
+    (assessment: Assessments) => assessment.results,
+    { onDelete: 'CASCADE' },
+  )
   @JoinColumn({ name: 'assessment_id' })
   assessment: Assessments;
 
-  @ManyToOne(() => Games, (game: Games) => game.assessment_results)
+  @ManyToOne(() => Games, (game: Games) => game.assessment_results, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'game_id' })
   game: Games;
 }

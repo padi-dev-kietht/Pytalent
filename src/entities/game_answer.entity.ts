@@ -34,18 +34,23 @@ export class GameAnswer extends BaseEntity {
   is_correct: boolean;
 
   // Associations
-  @ManyToOne(() => Games, (game: Games) => game.game_answers)
+  @ManyToOne(() => Games, (game: Games) => game.game_answers, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'game_id' })
   game: Games;
 
   @ManyToOne(
     () => LogicalQuestions,
     (question: LogicalQuestions) => question.game_answers,
+    { onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: 'question_id' })
   question: LogicalQuestions;
 
-  @ManyToOne(() => MemoryGame, (memory: MemoryGame) => memory.game_answers)
+  @ManyToOne(() => MemoryGame, (memory: MemoryGame) => memory.game_answers, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'level_id' })
   level: MemoryGame;
 }

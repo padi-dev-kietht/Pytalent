@@ -27,17 +27,22 @@ export class GameResult extends BaseEntity {
   @Column({ type: 'integer' })
   score: number;
 
-  @ManyToOne(() => Games, (game: Games) => game.game_results)
+  @ManyToOne(() => Games, (game: Games) => game.game_results, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'game_id' })
   game: Games;
 
-  @ManyToOne(() => Users, (user: Users) => user.game_results)
+  @ManyToOne(() => Users, (user: Users) => user.game_results, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'candidate_id' })
   candidate: Users;
 
   @ManyToOne(
     () => Assessments,
     (assessment: Assessments) => assessment.game_results,
+    { onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: 'assessment_id' })
   assessment: Assessments;

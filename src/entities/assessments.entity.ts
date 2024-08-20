@@ -42,30 +42,40 @@ export class Assessments extends BaseEntity {
   is_archived: boolean;
 
   //Associations
-  @ManyToOne(() => Users, (candidate: Users) => candidate.assessments)
+  @ManyToOne(() => Users, (candidate: Users) => candidate.assessments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'candidate_id' })
   candidate: Users;
 
   @OneToMany(
     () => Invitations,
     (invitation: Invitations) => invitation.assessment,
+    { cascade: true },
   )
   invitations: Invitations[];
 
   @OneToMany(
     () => AssessmentsResult,
     (result: AssessmentsResult) => result.assessment,
+    { cascade: true },
   )
   results: AssessmentsResult[];
 
-  @OneToMany(() => GameResult, (result: GameResult) => result.assessment)
+  @OneToMany(() => GameResult, (result: GameResult) => result.assessment, {
+    cascade: true,
+  })
   game_results: GameResult[];
 
-  @ManyToOne(() => Users, (hr: Users) => hr.assessments)
+  @ManyToOne(() => Users, (hr: Users) => hr.assessments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'created_by' })
   created_by_hr: Users;
 
-  @ManyToMany(() => Games, (game: Games) => game.assessments)
+  @ManyToMany(() => Games, (game: Games) => game.assessments, {
+    onDelete: 'CASCADE',
+  })
   @JoinTable({
     name: 'assessments_games',
     joinColumn: {

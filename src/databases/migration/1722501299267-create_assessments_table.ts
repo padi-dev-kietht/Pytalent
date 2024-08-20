@@ -64,11 +64,13 @@ export class createAssessmentsTable1722501299267 implements MigrationInterface {
         columnNames: ['created_by'],
         referencedTableName: 'users',
         referencedColumnNames: ['id'],
+        onDelete: 'CASCADE',
       }),
       new TableForeignKey({
         columnNames: ['candidate_id'],
         referencedTableName: 'users',
         referencedColumnNames: ['id'],
+        onDelete: 'CASCADE',
       }),
     ]);
   }

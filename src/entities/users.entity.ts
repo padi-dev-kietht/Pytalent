@@ -32,28 +32,34 @@ export class Users extends BaseEntity {
   role: RoleEnum;
 
   //Associations
-  @OneToMany(() => Token, (token: Token) => token.user)
+  @OneToMany(() => Token, (token: Token) => token.user, { cascade: true })
   tokens: Token[];
 
-  @OneToMany(() => Invitations, (invitation: Invitations) => invitation.user)
+  @OneToMany(() => Invitations, (invitation: Invitations) => invitation.user, {
+    cascade: true,
+  })
   invitations: Invitations[];
 
-  @OneToMany(() => GameResult, (result: GameResult) => result.candidate)
+  @OneToMany(() => GameResult, (result: GameResult) => result.candidate, {
+    cascade: true,
+  })
   game_results: GameResult[];
 
   @OneToMany(
     () => Assessments,
     (assessment: Assessments) => assessment.created_by,
+    { cascade: true },
   )
   assessments: Assessments[];
 
   @OneToMany(
     () => Assessments,
     (assessment: Assessments) => assessment.candidate,
+    { cascade: true },
   )
   assessments_candidate: Assessments[];
 
-  @ManyToMany(() => Games, (game: Games) => game.hrs)
+  @ManyToMany(() => Games, (game: Games) => game.hrs, { onDelete: 'CASCADE' })
   @JoinTable({
     name: 'hr_games',
     joinColumn: {
