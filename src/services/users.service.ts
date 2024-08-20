@@ -132,7 +132,7 @@ export class UsersService {
   async inviteCandidate(inviteCandidateDto: InviteCandidateDto): Promise<void> {
     const { email, assessment_id } = inviteCandidateDto;
 
-    // Check if the candidate already exists
+    // Check if the candidate already exists, if not create one
     let candidate: Users = await this.usersRepository.findOne({
       where: { email, role: RoleEnum.CANDIDATE },
     });
@@ -140,12 +140,18 @@ export class UsersService {
       candidate = await this.checkOrCreateCandidate({ email });
     }
 
-    // Check if the assessment exists
+    // Check if the assessment exists or already assigned to a candidate or archived
     const assessment: Assessments = await this.assessmentsRepository.findOne({
       where: { id: assessment_id },
     });
     if (!assessment) {
       throw new NotFoundException('Assessment not found');
+    }
+    if (assessment.candidate_id !== null) {
+      throw new NotFoundException('Assessment already assigned to a candidate');
+    }
+    if (assessment.is_archived) {
+      throw new NotFoundException('Assessment is archived');
     }
 
     // Create an invitation
@@ -165,16 +171,15 @@ export class UsersService {
       .send();
   }
 
-  async addCandidateToAssessment(
-    assessment_id: number,
-    candidate_id: number,
-    hr_id: number,
-  ) {
+  async addCandidateToAssessment(assessment_id: number, candidate_id: number) {
     const assessment: Assessments = await this.assessmentsRepository.findOne({
       where: { id: assessment_id },
     });
     if (!assessment) {
       throw new NotFoundException('Assessment not found');
+    }
+    if (assessment.is_archived) {
+      throw new NotFoundException('Assessment is archived');
     }
 
     const candidate: Users = await this.usersRepository.findOne({
@@ -203,7 +208,6 @@ export class UsersService {
     await this.addCandidateToAssessment(
       invitation.assessment_id,
       invitation.candidate_id,
-      invitation.hr_id,
     );
   }
 }
