@@ -72,13 +72,7 @@ export class AssessmentService {
 
   async deleteAssessment(id: number, hr_id: number) {
     const assessment: Assessments = await this.assessmentsRepository.findOne({
-      relations: [
-        'created_by_hr',
-        'results',
-        'game_results',
-        'invitations',
-        'games',
-      ],
+      relations: ['created_by_hr'],
       where: { id },
     });
     if (assessment.created_by !== hr_id) {
