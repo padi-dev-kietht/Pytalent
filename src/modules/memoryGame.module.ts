@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MemoryGameEntity } from '../entities';
 import { MemoryGameRepository } from '../repositories/memoryGame.repository';
+import { MemoryGame } from '../entities/memory_game.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MemoryGameEntity])],
+  imports: [TypeOrmModule.forFeature([MemoryGame])],
   providers: [MemoryGameRepository],
   exports: [MemoryGameRepository],
 })

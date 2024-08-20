@@ -20,11 +20,9 @@ export function Exists(
       validator: {
         async validate(value: any, args: ValidationArguments) {
           const [entity, tableField] = args.constraints;
-
           if (!value) {
             return true;
           }
-
           let connection;
           let repository;
           if (AppDataSource.isInitialized) {
@@ -36,14 +34,10 @@ export function Exists(
               mess = 'model ' + entity + ' not found';
               return false;
             }
-
             repository = connection.getRepository(entity);
           }
-
           const whereClause = {};
-
           whereClause[tableField] = value;
-
           const result = await repository.findOne({
             where: whereClause,
           });

@@ -22,10 +22,14 @@ import { AppController } from '../controllers/app.controller';
 import { UsersModule } from './users.module';
 import { AuthModule } from './auth.module';
 import { GameResult } from '../entities/game_result.entity';
-import { UsersHrController } from '../controllers/users.hr.controller';
 import { GameAnswer } from '../entities/game_answer.entity';
 import { LogicalQuestions } from '../entities/logical_questions.entity';
 import { MemoryGame } from '../entities/memory_game.entity';
+import { GameAnswerModule } from './gameAnswer.module';
+import { LogicalQuestionsModule } from './logicalQuestion.module';
+import { MemoryGameModule } from './memoryGame.module';
+import { InvitationsModule } from './invitations.module';
+import { GamesModule } from './game.module';
 // import { GraphQLModule } from '@nestjs/graphql';
 // import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 // import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
@@ -69,6 +73,12 @@ const options = databaseConfig as TypeOrmModuleOptions;
     UsersModule,
     AuthModule,
     AssessmentsModule,
+    GamesModule,
+    GameAnswerModule,
+    LogicalQuestionsModule,
+    MemoryGameModule,
+    InvitationsModule,
+
     //graphQL module
     // GraphQLModule.forRoot<ApolloDriverConfig>({
     //   driver: ApolloDriver,

@@ -8,6 +8,7 @@ import {
 import { BaseEntity } from './base.entity';
 import { Games } from './games.entity';
 import { LogicalQuestions } from './logical_questions.entity';
+import { MemoryGame } from './memory_game.entity';
 
 @Entity()
 export class GameAnswer extends BaseEntity {
@@ -44,10 +45,7 @@ export class GameAnswer extends BaseEntity {
   @JoinColumn({ name: 'question_id' })
   question: LogicalQuestions;
 
-  @ManyToOne(
-    () => LogicalQuestions,
-    (question: LogicalQuestions) => question.game_answers,
-  )
+  @ManyToOne(() => MemoryGame, (memory: MemoryGame) => memory.game_answers)
   @JoinColumn({ name: 'level_id' })
-  level: LogicalQuestions;
+  level: MemoryGame;
 }

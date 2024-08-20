@@ -47,13 +47,17 @@ export class UsersAdminController extends BaseController {
     @Body() createUserDto: CreateUserDto,
     @Res() res: Response,
   ) {
-    await this.usersService.checkOrCreateHr(createUserDto);
-    return this.successResponse(
-      {
-        message: 'Success',
-      },
-      res,
-    );
+    try {
+      await this.usersService.checkOrCreateHr(createUserDto);
+      return this.successResponse(
+        {
+          message: 'Success',
+        },
+        res,
+      );
+    } catch (e) {
+      return this.errorsResponse(e.message, res);
+    }
   }
 
   // Deleting a HR
