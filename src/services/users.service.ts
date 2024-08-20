@@ -157,7 +157,7 @@ export class UsersService {
     await this.invitationsRepository.save(invitation);
 
     // Send an email with the invitation link
-    const invitationLink = `http://localhost:3000/hr/invite/${invitation.id}`;
+    const invitationLink = `http://localhost:3000/assessments/invite/${invitation.id}`;
     await this.mailService
       .to(email)
       .subject('You are invited to participate in an assessment')
@@ -175,10 +175,6 @@ export class UsersService {
     });
     if (!assessment) {
       throw new NotFoundException('Assessment not found');
-    }
-
-    if (assessment.created_by !== hr_id) {
-      throw new NotFoundException('You are not the owner of this assessment');
     }
 
     const candidate: Users = await this.usersRepository.findOne({

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
@@ -24,7 +24,7 @@ import { MailService } from '../common/lib/mail/mail.lib';
       GamesEntity,
       InvitationsEntity,
     ]),
-    AssessmentsModule,
+    forwardRef(() => AssessmentsModule),
     GamesModule,
     InvitationsModule,
   ],

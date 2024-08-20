@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  forwardRef,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+} from '@nestjs/common';
 import { AppService } from '../services/app.service';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import databaseConfig from '../databases/config/index';
@@ -77,7 +82,7 @@ const options = databaseConfig as TypeOrmModuleOptions;
     GameAnswerModule,
     LogicalQuestionsModule,
     MemoryGameModule,
-    InvitationsModule,
+    forwardRef(() => InvitationsModule),
 
     //graphQL module
     // GraphQLModule.forRoot<ApolloDriverConfig>({
