@@ -70,6 +70,15 @@ export class UsersService {
       throw new NotFoundException('Games not found');
     }
 
+    const allGamesIds = games.map((game) => game.id);
+    const allGamesExist = gameIds.every((gameId) =>
+      allGamesIds.includes(gameId),
+    );
+
+    if (!allGamesExist) {
+      throw new NotFoundException('Some games do not exist');
+    }
+
     hr.games = games;
     await this.usersRepository.save(hr);
   }
