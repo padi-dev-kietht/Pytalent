@@ -6,6 +6,7 @@ import { GameAnswer } from '../entities/game_answer.entity';
 import { LogicalQuestions } from '../entities/logical_questions.entity';
 import { MemoryGameRepository } from '../repositories/memoryGame.repository';
 import { MemoryGame } from '../entities/memory_game.entity';
+import { Games } from '../entities/games.entity';
 
 @Injectable()
 export class GamesService {
@@ -16,7 +17,24 @@ export class GamesService {
     private memoryGameRepository: MemoryGameRepository,
   ) {}
 
+  // Global
+  async getGames(): Promise<Games[]> {
+    return this.gamesRepository.find();
+  }
+
+  async getGameById(id: number): Promise<Games> {
+    const game = await this.gamesRepository.findOne({ where: { id } });
+    if (!game) {
+      throw new NotFoundException('Game not found');
+    }
+    return game;
+  }
+
   // Logical Questions Game
+  async getLogicalQuestions(): Promise<LogicalQuestions[]> {
+    return this.logicalQuestionsRepository.find();
+  }
+
   async getRandomQuestions(): Promise<LogicalQuestions[]> {
     const questions = await this.logicalQuestionsRepository.find();
     const yesQuestions = questions.filter((q) => q.is_conclusion_correct);

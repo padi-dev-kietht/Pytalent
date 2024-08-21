@@ -66,37 +66,6 @@ export class UsersHrController extends BaseController {
     );
   }
 
-  // Getting an assessment by ID
-  @Get('/assessments/:id')
-  @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
-  async getAssessmentById(id: number, @Res() res: Response, @Request() req) {
-    const assessment = await this.assessmentService.getAssessmentById(
-      id,
-      req.user.id,
-    );
-    return this.successResponse(
-      {
-        data: assessment,
-      },
-      res,
-    );
-  }
-
-  // Getting all assessments
-  @Get('/assessments')
-  @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
-  async getAllAssessmentByHrId(@Res() res: Response, @Request() req) {
-    const assessments = await this.assessmentService.getAllAssessmentByHrId(
-      req.user.id,
-    );
-    return this.successResponse(
-      {
-        data: assessments,
-      },
-      res,
-    );
-  }
-
   // Deleting an assessment
   @Delete('/assessments/delete/:id')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))

@@ -14,10 +14,15 @@ export class GamesController extends BaseController {
     super();
   }
 
-  // @Get(':id')
-  // async getGameById(id: number) {
-  //   return this.gameService.getGameById(id);
-  // }
+  @Get()
+  async getGames(): Promise<any> {
+    return this.gameService.getGames();
+  }
+
+  @Get(':id')
+  async getGameById(@Param('id') gameId: number): Promise<any> {
+    return this.gameService.getGameById(gameId);
+  }
 
   @Post(':id/start')
   async startGame(@Param('id') gameId: number): Promise<any> {

@@ -75,16 +75,18 @@ export class AssessmentService {
       relations: ['created_by_hr'],
       where: { id },
     });
+
+    if (!assessment) {
+      throw new NotFoundException('Assessment not found');
+    }
+
     if (assessment.created_by !== hr_id) {
       throw new ConflictException(
         'You are not allowed to delete this assessment',
       );
     }
-    if (assessment) {
-      await this.assessmentsRepository.delete(id);
-    } else {
-      throw new NotFoundException('Assessment not found');
-    }
+
+    await this.assessmentsRepository.delete(id);
   }
 
   async updateAssessment(
