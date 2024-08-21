@@ -7,6 +7,7 @@ import { LogicalQuestions } from '../entities/logical_questions.entity';
 import { MemoryGameRepository } from '../repositories/memoryGame.repository';
 import { MemoryGame } from '../entities/memory_game.entity';
 import { Games } from '../entities/games.entity';
+import { GameQuestionsRepository } from '../repositories/gameQuestion.repository';
 
 @Injectable()
 export class GamesService {
@@ -15,6 +16,7 @@ export class GamesService {
     private gameAnswerRepository: GameAnswerRepository,
     private logicalQuestionsRepository: LogicalQuestionsRepository,
     private memoryGameRepository: MemoryGameRepository,
+    private gameQuestionsRepository: GameQuestionsRepository,
   ) {}
 
   // Global
@@ -28,6 +30,28 @@ export class GamesService {
       throw new NotFoundException('Game not found');
     }
     return game;
+  }
+
+  async startGame(gameId: number): Promise<any> {
+    const game = await this.gamesRepository.findOneBy({ id: gameId });
+    if (!game) {
+      throw new NotFoundException('Game not found');
+    }
+
+    if (game.game_type === 'logical') {
+      const randomQuestionsList = await this.getRandomQuestions();
+      const gameQuestions = randomQuestionsList.map((question, index) => ({
+        question_id: question.id,
+        game_id: gameId,
+        order: index + 1,
+      }));
+      await this.gameQuestionsRepository.save(gameQuestions);
+      return 'GEEMU SUTAATO!';
+    }
+    if (game.game_type === 'memory') {
+      const d = await this.getMemoryGameDetails(25);
+      return d;
+    }
   }
 
   // Logical Questions Game
@@ -90,7 +114,7 @@ export class GamesService {
     questionId: number,
     answer: boolean,
   ): Promise<GameAnswer> {
-    const question = await this.logicalQuestionsRepository.findOne({
+    const question = await this.gameQuestionsRepository.findOne({
       where: { id: questionId },
     });
     if (!question) {
@@ -102,7 +126,7 @@ export class GamesService {
       throw new NotFoundException('Game not found');
     }
 
-    const isCorrect = question.is_conclusion_correct === answer;
+    const isCorrect = question.question.is_conclusion_correct === answer;
     const gameAnswer = this.gameAnswerRepository.create({
       game_id: gameId,
       question_id: questionId,

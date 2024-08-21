@@ -7,6 +7,7 @@ import { GamesRepository } from '../repositories/game.repository';
 import { GameAnswerModule } from './gameAnswer.module';
 import { LogicalQuestionsModule } from './logicalQuestion.module';
 import { MemoryGameModule } from './memoryGame.module';
+import { GameQuestionsModule } from './gameQuestions.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { MemoryGameModule } from './memoryGame.module';
     GameAnswerModule,
     LogicalQuestionsModule,
     MemoryGameModule,
+    GameQuestionsModule,
   ],
   controllers: [GamesController],
   providers: [GamesService, GamesRepository],
