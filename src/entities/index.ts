@@ -8,3 +8,4 @@ export { MemoryGame as MemoryGameEntity } from './memory_game.entity';
 export { Games as GamesEntity } from './games.entity';
 export { GameResult as GameResultEntity } from './game_result.entity';
 export { GameAnswer as GameAnswerEntity } from './game_answer.entity';
+export { GameQuestions as GameQuestionsEntity } from './game_questions.entity';

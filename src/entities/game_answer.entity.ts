@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { BaseEntity } from './base.entity';
@@ -39,14 +40,6 @@ export class GameAnswer extends BaseEntity {
   })
   @JoinColumn({ name: 'game_id' })
   game: Games;
-
-  @ManyToOne(
-    () => LogicalQuestions,
-    (question: LogicalQuestions) => question.game_answers,
-    { onDelete: 'CASCADE' },
-  )
-  @JoinColumn({ name: 'question_id' })
-  question: LogicalQuestions;
 
   @ManyToOne(() => MemoryGame, (memory: MemoryGame) => memory.game_answers, {
     onDelete: 'CASCADE',

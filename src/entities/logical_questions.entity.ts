@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { GameAnswer } from './game_answer.entity';
+import { GameQuestions } from './game_questions.entity';
 
 @Entity()
 export class LogicalQuestions extends BaseEntity {
@@ -24,8 +24,9 @@ export class LogicalQuestions extends BaseEntity {
   @Column({ type: 'boolean' })
   is_conclusion_correct: boolean;
 
-  @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.question, {
-    cascade: true,
-  })
-  game_answers: GameAnswer[];
+  @OneToMany(
+    () => GameQuestions,
+    (question: GameQuestions) => question.question,
+  )
+  game_questions: GameQuestions[];
 }

@@ -35,6 +35,7 @@ import { LogicalQuestionsModule } from './logicalQuestion.module';
 import { MemoryGameModule } from './memoryGame.module';
 import { InvitationsModule } from './invitations.module';
 import { GamesModule } from './game.module';
+import { GameQuestions } from '../entities/game_questions.entity';
 // import { GraphQLModule } from '@nestjs/graphql';
 // import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 // import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
@@ -59,6 +60,7 @@ const options = databaseConfig as TypeOrmModuleOptions;
       GameAnswer,
       LogicalQuestions,
       MemoryGame,
+      GameQuestions,
     ]),
 
     TypeOrmModule.forRoot({

@@ -28,8 +28,8 @@ export class GamesController extends BaseController {
   async startGame(@Param('id') gameId: number): Promise<any> {
     const game = await this.gameRepository.findOneBy({ id: gameId });
     if (game.game_type === 'logical') {
-      const q = await this.gameService.getRandomQuestions();
-      return q;
+      const randomQuestionsList = await this.gameService.getRandomQuestions();
+      return randomQuestionsList;
     }
     if (game.game_type === 'memory') {
       const d = await this.gameService.getMemoryGameDetails(25);
