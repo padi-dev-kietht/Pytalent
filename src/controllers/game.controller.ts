@@ -32,9 +32,9 @@ export class GamesController extends BaseController {
   @Post(':id/submit-answer')
   async submitGameAnswer(
     @Param('id') gameId: number,
-    @Body('questionId') questionId: number,
+    @Body('questionOrder') questionOrder: number,
     @Body('answer') answer: boolean,
   ): Promise<GameAnswer> {
-    return this.gameService.submitGameAnswer(gameId, questionId, answer);
+    return this.gameService.submitGameAnswer(gameId, questionOrder, answer);
   }
 }

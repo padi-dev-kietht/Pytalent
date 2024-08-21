@@ -39,6 +39,7 @@ export class GamesService {
     }
 
     if (game.game_type === 'logical') {
+      await this.gameQuestionsRepository.delete({ game_id: gameId });
       const randomQuestionsList = await this.getRandomQuestions();
       const gameQuestions = randomQuestionsList.map((question, index) => ({
         question_id: question.id,
@@ -88,20 +89,20 @@ export class GamesService {
       const randomIndex = Math.floor(Math.random() * selectedQuestions.length);
       const question = selectedQuestions.splice(randomIndex, 1)[0];
       if (question.is_conclusion_correct) {
-        if (trueCount <= 3) {
+        if (trueCount < 3) {
           sortedQuestions.push(question);
           trueCount++;
-          if (trueCount === 3) {
-            falseCount = 0;
-          }
+          falseCount = 0;
+        } else {
+          selectedQuestions.push(question);
         }
       } else {
-        if (falseCount <= 3) {
+        if (falseCount < 3) {
           sortedQuestions.push(question);
           falseCount++;
-          if (falseCount === 3) {
-            trueCount = 0;
-          }
+          trueCount = 0;
+        } else {
+          selectedQuestions.push(question);
         }
       }
     }
@@ -111,11 +112,12 @@ export class GamesService {
 
   async submitGameAnswer(
     gameId: number,
-    questionId: number,
+    questionOrder: number,
     answer: boolean,
   ): Promise<GameAnswer> {
     const question = await this.gameQuestionsRepository.findOne({
-      where: { id: questionId },
+      where: { game: { id: gameId }, order: questionOrder },
+      relations: ['question'],
     });
     if (!question) {
       throw new NotFoundException('Question not found');
@@ -129,7 +131,7 @@ export class GamesService {
     const isCorrect = question.question.is_conclusion_correct === answer;
     const gameAnswer = this.gameAnswerRepository.create({
       game_id: gameId,
-      question_id: questionId,
+      question_id: question.question.id,
       answer: answer.toString(),
       score: isCorrect ? 1 : 0,
       is_correct: isCorrect,
