@@ -105,8 +105,8 @@ export class AssessmentService {
       const paramUpdate: FindOrCreateAssessmentInterface = plainToClass(
         Assessments,
         {
-          name: params.name,
-          description: params.description,
+          name: params.name ?? assessment.name,
+          description: params.description ?? assessment.description,
           start_date: params.start_date,
           end_date: params.end_date,
           is_archived: params.is_archived,

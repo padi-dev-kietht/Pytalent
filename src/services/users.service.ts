@@ -96,6 +96,10 @@ export class UsersService {
       throw new NotFoundException('Assessment not found');
     }
 
+    if (assessment.is_archived) {
+      throw new NotFoundException('Assessment is archived');
+    }
+
     const games: Games[] = await this.gamesRepository.findByIds(gameIds);
     if (!games.length) {
       throw new NotFoundException('Games not found');

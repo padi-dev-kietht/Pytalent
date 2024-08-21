@@ -3,14 +3,16 @@ import { Exists } from '../shared/decorator/exists.decorator';
 import { Assessments } from '../entities/assessments.entity';
 
 export class CreateAssessmentsDto {
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
   @Exists(Assessments, 'name')
-  name: string;
+  name?: string;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
-  description: string;
+  description?: string;
 
   @IsOptional()
   start_date: Date;
