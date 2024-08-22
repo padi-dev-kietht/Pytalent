@@ -31,6 +31,10 @@ export class createGameQuestionsTable1724227836156
             type: 'integer',
           },
           {
+            name: 'assessment_id',
+            type: 'integer',
+          },
+          {
             name: 'order',
             type: 'integer',
           },
@@ -57,6 +61,12 @@ export class createGameQuestionsTable1724227836156
         columnNames: ['question_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'logical_questions',
+        onDelete: 'CASCADE',
+      }),
+      new TableForeignKey({
+        columnNames: ['assessment_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'assessments',
         onDelete: 'CASCADE',
       }),
     ]);

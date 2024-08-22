@@ -59,12 +59,16 @@ export class GamesService {
 
     if (game.game_type === 'logical') {
       // Delete previous game questions
-      await this.gameQuestionsRepository.delete({ game_id: gameId });
+      await this.gameQuestionsRepository.delete({
+        game_id: gameId,
+        assessment_id: assessmentId,
+      });
 
       const randomQuestionsList = await this.getRandomQuestions();
       const gameQuestions = randomQuestionsList.map((question, index) => ({
         question_id: question.id,
         game_id: gameId,
+        assessment_id: assessmentId,
         order: index + 1,
       }));
       await this.gameQuestionsRepository.save(gameQuestions);

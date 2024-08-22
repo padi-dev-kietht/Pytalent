@@ -3,12 +3,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Games } from './games.entity';
-import { LogicalQuestions } from './logical_questions.entity';
 import { MemoryGame } from './memory_game.entity';
 
 @Entity()

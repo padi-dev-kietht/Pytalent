@@ -14,6 +14,7 @@ import { AssessmentsResult } from './assessments_result.entity';
 import { Games } from './games.entity';
 import { GameResult } from './game_result.entity';
 import { Users } from './users.entity';
+import { GameQuestions } from './game_questions.entity';
 
 @Entity()
 export class Assessments extends BaseEntity {
@@ -47,6 +48,15 @@ export class Assessments extends BaseEntity {
   })
   @JoinColumn({ name: 'candidate_id' })
   candidate: Users;
+
+  @OneToMany(
+    () => GameQuestions,
+    (question: GameQuestions) => question.assessment,
+    {
+      cascade: true,
+    },
+  )
+  game_questions: GameQuestions[];
 
   @OneToMany(
     () => Invitations,
