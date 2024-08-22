@@ -25,8 +25,11 @@ export class GamesController extends BaseController {
   }
 
   @Post(':id/start')
-  async startGame(@Param('id') gameId: number): Promise<any> {
-    return this.gameService.startGame(gameId);
+  async startGame(
+    @Param('id') gameId: number,
+    @Body('assessmentId') assessmentId: number,
+  ): Promise<any> {
+    return this.gameService.startGame(gameId, assessmentId);
   }
 
   @Post(':id/submit-answer')

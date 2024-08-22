@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GamesEntity } from '../entities';
 import { GamesController } from '../controllers/game.controller';
@@ -8,6 +8,7 @@ import { GameAnswerModule } from './gameAnswer.module';
 import { LogicalQuestionsModule } from './logicalQuestion.module';
 import { MemoryGameModule } from './memoryGame.module';
 import { GameQuestionsModule } from './gameQuestions.module';
+import { AssessmentsModule } from './assessment.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { GameQuestionsModule } from './gameQuestions.module';
     LogicalQuestionsModule,
     MemoryGameModule,
     GameQuestionsModule,
+    forwardRef(() => AssessmentsModule),
   ],
   controllers: [GamesController],
   providers: [GamesService, GamesRepository],

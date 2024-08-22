@@ -10,6 +10,7 @@ import { json, urlencoded } from 'express';
 import helmet from 'helmet';
 import { AllExceptionsFilter } from '@exception/handle.exception';
 import { AppModule } from './modules/app.module';
+import { createConnection } from 'typeorm';
 
 const allowedOrigins = [
   // WEBSITES

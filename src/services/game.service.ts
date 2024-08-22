@@ -8,6 +8,8 @@ import { MemoryGameRepository } from '../repositories/memoryGame.repository';
 import { MemoryGame } from '../entities/memory_game.entity';
 import { Games } from '../entities/games.entity';
 import { GameQuestionsRepository } from '../repositories/gameQuestion.repository';
+import { AssessmentsRepository } from '../repositories/assessment.repository';
+import { getConnection } from 'typeorm';
 
 @Injectable()
 export class GamesService {
@@ -17,6 +19,7 @@ export class GamesService {
     private logicalQuestionsRepository: LogicalQuestionsRepository,
     private memoryGameRepository: MemoryGameRepository,
     private gameQuestionsRepository: GameQuestionsRepository,
+    private assessmentsRepository: AssessmentsRepository,
   ) {}
 
   // Global
@@ -32,14 +35,34 @@ export class GamesService {
     return game;
   }
 
-  async startGame(gameId: number): Promise<any> {
-    const game = await this.gamesRepository.findOneBy({ id: gameId });
+  async startGame(gameId: number, assessmentId: number): Promise<any> {
+    const game = await this.gamesRepository.findOne({
+      where: { id: gameId },
+    });
+
     if (!game) {
       throw new NotFoundException('Game not found');
     }
 
+    const assessment = await this.assessmentsRepository.findOne({
+      where: { id: assessmentId },
+    });
+    if (!assessment) {
+      throw new NotFoundException('Assessment not found');
+    }
+
+    const assessmentGame = await this.assessmentsRepository.query(
+      `SELECT game_id FROM assessments_games WHERE game_id = ${gameId} AND assessment_id = ${assessmentId}`,
+    );
+
+    if (assessmentGame.length === 0) {
+      throw new NotFoundException('Game is not assigned in that assessment');
+    }
+
     if (game.game_type === 'logical') {
+      // Delete previous game questions
       await this.gameQuestionsRepository.delete({ game_id: gameId });
+
       const randomQuestionsList = await this.getRandomQuestions();
       const gameQuestions = randomQuestionsList.map((question, index) => ({
         question_id: question.id,
