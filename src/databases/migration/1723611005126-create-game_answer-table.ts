@@ -45,6 +45,14 @@ export class createGameAnswerTable1723611005126 implements MigrationInterface {
             type: 'boolean',
           },
           {
+            name: 'total_time',
+            type: 'integer',
+          },
+          {
+            name: 'time_taken',
+            type: 'integer',
+          },
+          {
             name: 'created_at',
             type: 'datetime',
           },

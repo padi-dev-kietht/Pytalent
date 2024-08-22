@@ -34,6 +34,12 @@ export class GameAnswer extends BaseEntity {
   @Column({ type: 'boolean' })
   is_correct: boolean;
 
+  @Column({ type: 'integer', nullable: true })
+  total_time: number;
+
+  @Column({ type: 'integer', nullable: true })
+  time_taken: number;
+
   // Associations
   @ManyToOne(() => Games, (game: Games) => game.game_answers, {
     onDelete: 'CASCADE',

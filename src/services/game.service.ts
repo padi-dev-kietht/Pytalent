@@ -2,14 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { LogicalQuestionsRepository } from '../repositories/logicalQuestion.repository';
 import { GamesRepository } from '../repositories/game.repository';
 import { GameAnswerRepository } from '../repositories/gameAnswer.repository';
-import { GameAnswer } from '../entities/game_answer.entity';
 import { LogicalQuestions } from '../entities/logical_questions.entity';
 import { MemoryGameRepository } from '../repositories/memoryGame.repository';
 import { MemoryGame } from '../entities/memory_game.entity';
 import { Games } from '../entities/games.entity';
 import { GameQuestionsRepository } from '../repositories/gameQuestion.repository';
 import { AssessmentsRepository } from '../repositories/assessment.repository';
-import { getConnection } from 'typeorm';
 
 @Injectable()
 export class GamesService {
@@ -70,7 +68,9 @@ export class GamesService {
         order: index + 1,
       }));
       await this.gameQuestionsRepository.save(gameQuestions);
-      return 'GEEMU SUTAATO!';
+
+      const gameStartedTimer = new Date();
+      return gameStartedTimer;
     }
     if (game.game_type === 'memory') {
       const d = await this.getMemoryGameDetails(25);
@@ -137,7 +137,8 @@ export class GamesService {
     gameId: number,
     questionOrder: number,
     answer: boolean,
-  ): Promise<GameAnswer> {
+    startTime: Date,
+  ): Promise<any> {
     const question = await this.gameQuestionsRepository.findOne({
       where: { game: { id: gameId }, order: questionOrder },
       relations: ['question'],
@@ -151,14 +152,65 @@ export class GamesService {
       throw new NotFoundException('Game not found');
     }
 
+    const totalTime = 90; //fixes the total time to 90 seconds
     const isCorrect = question.question.is_conclusion_correct === answer;
+
+    const endTime = new Date();
+    const timeTaken = (endTime.getTime() - startTime.getTime()) / 1000;
+
     const gameAnswer = this.gameAnswerRepository.create({
       game_id: gameId,
       question_id: question.question.id,
       answer: answer.toString(),
       score: isCorrect ? 1 : 0,
+      total_time: totalTime,
+      time_taken: timeTaken,
       is_correct: isCorrect,
     });
+
+    if (timeTaken > totalTime) {
+      return 'Timed out';
+    }
+
+    return this.gameAnswerRepository.save(gameAnswer);
+  }
+
+  async skipGameQuestion(
+    gameId: number,
+    questionOrder: number,
+    startTime: Date,
+  ): Promise<any> {
+    const question = await this.gameQuestionsRepository.findOne({
+      where: { game: { id: gameId }, order: questionOrder },
+      relations: ['question'],
+    });
+    if (!question) {
+      throw new NotFoundException('Question not found');
+    }
+
+    const game = await this.gamesRepository.findOne({ where: { id: gameId } });
+    if (!game) {
+      throw new NotFoundException('Game not found');
+    }
+
+    const totalTime = 90; //fixes the total time to 90 seconds
+
+    const endTime = new Date();
+    const timeTaken = (endTime.getTime() - startTime.getTime()) / 1000;
+
+    const gameAnswer = this.gameAnswerRepository.create({
+      game_id: gameId,
+      question_id: question.question.id,
+      answer: 'skipped',
+      score: 0,
+      total_time: totalTime,
+      time_taken: timeTaken,
+      is_correct: false,
+    });
+
+    if (timeTaken > totalTime) {
+      return 'Timed out';
+    }
 
     return this.gameAnswerRepository.save(gameAnswer);
   }
