@@ -253,6 +253,7 @@ export class GamesService {
   }
 
   async skipGameQuestion(
+    assessmentId: number,
     gameId: number,
     questionOrder: number,
     startTime: Date,
@@ -278,6 +279,7 @@ export class GamesService {
     const gameAnswer = this.gameAnswerRepository.create({
       game_id: gameId,
       question_id: question.question.id,
+      assessment_id: assessmentId,
       answer: 'skipped',
       score: 0,
       total_time: totalTime,

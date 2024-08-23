@@ -57,17 +57,16 @@ export class AssessmentService {
       relations: ['created_by_hr'],
       where: { id },
     });
+    if (!assessment) {
+      throw new NotFoundException('Assessment not found');
+    }
     if (assessment.created_by !== hr_id) {
       throw new ConflictException(
         'You are not allowed to archive this assessment',
       );
     }
-    if (assessment) {
-      assessment.is_archived = true;
-      await this.assessmentsRepository.save(assessment);
-    } else {
-      throw new NotFoundException('Assessment not found');
-    }
+    assessment.is_archived = true;
+    await this.assessmentsRepository.save(assessment);
   }
 
   async deleteAssessment(id: number, hr_id: number) {
@@ -98,39 +97,38 @@ export class AssessmentService {
       relations: ['created_by_hr'],
       where: { id },
     });
+    if (!assessment) {
+      throw new NotFoundException('Assessment not found');
+    }
     if (assessment.created_by !== hr_id) {
       throw new ConflictException(
         'You are not allowed to update this assessment',
       );
     }
-    if (assessment) {
-      const paramUpdate: FindOrCreateAssessmentInterface = plainToClass(
-        Assessments,
-        {
-          name: params.name ?? assessment.name,
-          description: params.description ?? assessment.description,
-          start_date: params.start_date,
-          end_date: params.end_date,
-          is_archived: params.is_archived,
-          created_by: hr_id,
-        },
-      );
+    const paramUpdate: FindOrCreateAssessmentInterface = plainToClass(
+      Assessments,
+      {
+        name: params.name ?? assessment.name,
+        description: params.description ?? assessment.description,
+        start_date: params.start_date,
+        end_date: params.end_date,
+        is_archived: params.is_archived,
+        created_by: hr_id,
+      },
+    );
 
-      // Validation
-      if (paramUpdate.start_date > paramUpdate.end_date) {
-        throw new ConflictException('Start date must be before end date');
-      }
-      if (moment(paramUpdate.start_date).toDate() < new Date()) {
-        throw new ConflictException('Start date must be in the future');
-      }
-      if (moment(paramUpdate.end_date).toDate() < new Date()) {
-        throw new ConflictException('End date must be in the future');
-      }
-
-      await this.assessmentsRepository.update(id, paramUpdate);
-    } else {
-      throw new NotFoundException('Assessment not found');
+    // Validation
+    if (paramUpdate.start_date > paramUpdate.end_date) {
+      throw new ConflictException('Start date must be before end date');
     }
+    if (moment(paramUpdate.start_date).toDate() < new Date()) {
+      throw new ConflictException('Start date must be in the future');
+    }
+    if (moment(paramUpdate.end_date).toDate() < new Date()) {
+      throw new ConflictException('End date must be in the future');
+    }
+
+    await this.assessmentsRepository.update(id, paramUpdate);
   }
 
   async getAllAssessments(): Promise<Assessments[]> {

@@ -29,7 +29,11 @@ export class Assessments extends BaseEntity {
   @Column({ type: 'text' })
   description: string;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({
+    type: 'datetime',
+    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   start_date: Date;
 
   @Column({ type: 'datetime', nullable: true })

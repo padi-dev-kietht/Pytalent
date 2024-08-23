@@ -74,10 +74,16 @@ export class GamesController extends BaseController {
 
   @Post(':id/skip-question')
   async skipQuestion(
+    @Body('assessmentId') assessmentId: number,
     @Param('id') gameId: number,
     @Body('questionOrder') questionOrder: number,
     @Body('startTime') startTime: Date,
   ): Promise<GameAnswer> {
-    return this.gameService.skipGameQuestion(gameId, questionOrder, startTime);
+    return this.gameService.skipGameQuestion(
+      assessmentId,
+      gameId,
+      questionOrder,
+      startTime,
+    );
   }
 }
