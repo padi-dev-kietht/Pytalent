@@ -15,6 +15,8 @@ import { Games } from './games.entity';
 import { GameResult } from './game_result.entity';
 import { Users } from './users.entity';
 import { GameQuestions } from './game_questions.entity';
+import { GameAnswer } from './game_answer.entity';
+import { AssessmentStatusEnum } from '../common/enum/assessment-status.enum';
 
 @Entity()
 export class Assessments extends BaseEntity {
@@ -39,6 +41,13 @@ export class Assessments extends BaseEntity {
   @Column({ type: 'int', nullable: true })
   candidate_id: number;
 
+  @Column({
+    type: 'varchar',
+    default: AssessmentStatusEnum.IDLE,
+    nullable: true,
+  })
+  status: AssessmentStatusEnum;
+
   @Column({ type: 'boolean', default: false })
   is_archived: boolean;
 
@@ -48,6 +57,11 @@ export class Assessments extends BaseEntity {
   })
   @JoinColumn({ name: 'candidate_id' })
   candidate: Users;
+
+  @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.assessment, {
+    cascade: true,
+  })
+  game_answers: GameAnswer[];
 
   @OneToMany(
     () => GameQuestions,

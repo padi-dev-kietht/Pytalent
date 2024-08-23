@@ -8,6 +8,9 @@ import { MemoryGame } from '../entities/memory_game.entity';
 import { Games } from '../entities/games.entity';
 import { GameQuestionsRepository } from '../repositories/gameQuestion.repository';
 import { AssessmentsRepository } from '../repositories/assessment.repository';
+import { GameResultRepository } from '../repositories/gameResult.repository';
+import { InvitationsRepository } from '../repositories/invitation.repository';
+import { AssessmentStatusEnum } from '../common/enum/assessment-status.enum';
 
 @Injectable()
 export class GamesService {
@@ -18,6 +21,8 @@ export class GamesService {
     private memoryGameRepository: MemoryGameRepository,
     private gameQuestionsRepository: GameQuestionsRepository,
     private assessmentsRepository: AssessmentsRepository,
+    private gameResultRepository: GameResultRepository,
+    private invitationRepository: InvitationsRepository,
   ) {}
 
   // Global
@@ -33,6 +38,7 @@ export class GamesService {
     return game;
   }
 
+  // Game start
   async startGame(gameId: number, assessmentId: number): Promise<any> {
     const game = await this.gamesRepository.findOne({
       where: { id: gameId },
@@ -57,6 +63,9 @@ export class GamesService {
       throw new NotFoundException('Game is not assigned in that assessment');
     }
 
+    assessment.status = AssessmentStatusEnum.IN_PROGRESS;
+    await this.assessmentsRepository.save(assessment);
+
     if (game.game_type === 'logical') {
       // Delete previous game questions
       await this.gameQuestionsRepository.delete({
@@ -74,11 +83,63 @@ export class GamesService {
       await this.gameQuestionsRepository.save(gameQuestions);
 
       const gameStartedTimer = new Date();
-      return gameStartedTimer;
+      return { assessmentId, gameStartedTimer };
     }
     if (game.game_type === 'memory') {
       const d = await this.getMemoryGameDetails(25);
       return d;
+    }
+  }
+
+  //Game end
+  async endGame(gameId: number, assessmentId: number): Promise<any> {
+    const game = await this.gamesRepository.findOne({
+      where: { id: gameId },
+    });
+
+    if (!game) {
+      throw new NotFoundException('Game not found');
+    }
+
+    const assessment = await this.assessmentsRepository.findOne({
+      where: { id: assessmentId },
+    });
+    if (!assessment) {
+      throw new NotFoundException('Assessment not found');
+    }
+
+    const assessmentGame = await this.assessmentsRepository.query(
+      `SELECT game_id FROM assessments_games WHERE game_id = ${gameId} AND assessment_id = ${assessmentId}`,
+    );
+
+    if (assessmentGame.length === 0) {
+      throw new NotFoundException('Game is not assigned in that assessment');
+    }
+
+    if (game.game_type === 'logical') {
+      const gameAnswers = await this.gameAnswerRepository.find({
+        where: {
+          game_id: gameId,
+          assessment_id: assessmentId,
+        },
+      });
+
+      const totalScore = gameAnswers.reduce(
+        (acc, answer) => acc + answer.score,
+        0,
+      );
+
+      const gameResult = this.gameResultRepository.create({
+        candidate_id: assessment.candidate_id,
+        game_id: gameId,
+        assessment_id: assessmentId,
+        score: totalScore,
+      });
+
+      await this.gameResultRepository.save(gameResult);
+    }
+    if (game.game_type === 'memory') {
+      return 'Memory game ended';
     }
   }
 
@@ -138,11 +199,19 @@ export class GamesService {
   }
 
   async submitGameAnswer(
+    assessmentId: number,
     gameId: number,
     questionOrder: number,
     answer: boolean,
     startTime: Date,
   ): Promise<any> {
+    const assessment = await this.assessmentsRepository.findOne({
+      where: { id: assessmentId },
+    });
+    if (!assessment) {
+      throw new NotFoundException('Assessment not found');
+    }
+
     const question = await this.gameQuestionsRepository.findOne({
       where: { game: { id: gameId }, order: questionOrder },
       relations: ['question'],
@@ -151,7 +220,10 @@ export class GamesService {
       throw new NotFoundException('Question not found');
     }
 
-    const game = await this.gamesRepository.findOne({ where: { id: gameId } });
+    const game = await this.gamesRepository.findOne({
+      where: { id: gameId },
+      relations: ['assessments'],
+    });
     if (!game) {
       throw new NotFoundException('Game not found');
     }
@@ -165,6 +237,7 @@ export class GamesService {
     const gameAnswer = this.gameAnswerRepository.create({
       game_id: gameId,
       question_id: question.question.id,
+      assessment_id: assessmentId,
       answer: answer.toString(),
       score: isCorrect ? 1 : 0,
       total_time: totalTime,

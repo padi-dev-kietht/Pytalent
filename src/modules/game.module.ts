@@ -9,6 +9,8 @@ import { LogicalQuestionsModule } from './logicalQuestion.module';
 import { MemoryGameModule } from './memoryGame.module';
 import { GameQuestionsModule } from './gameQuestions.module';
 import { AssessmentsModule } from './assessment.module';
+import { GameResultModule } from './gameResult.module';
+import { InvitationsModule } from './invitations.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { AssessmentsModule } from './assessment.module';
     MemoryGameModule,
     GameQuestionsModule,
     forwardRef(() => AssessmentsModule),
+    GameResultModule,
+    InvitationsModule,
   ],
   controllers: [GamesController],
   providers: [GamesService, GamesRepository],

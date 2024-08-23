@@ -18,6 +18,7 @@ import { InviteCandidateDto } from '../dtos/invite-candidate.dto';
 import { InvitationStatusEnum } from '../common/enum/invitation-status.enum';
 import { InvitationsRepository } from '../repositories/invitation.repository';
 import { MailService } from '../common/lib/mail/mail.lib';
+import { AssessmentStatusEnum } from '../common/enum/assessment-status.enum';
 
 @Injectable()
 export class UsersService {
@@ -217,13 +218,16 @@ export class UsersService {
   async acceptInvitation(invitation_id: number): Promise<void> {
     const invitation: any = await this.invitationsRepository.findOne({
       where: { id: invitation_id, status: InvitationStatusEnum.PENDING },
+      relations: ['assessment'],
     });
     if (!invitation) {
       throw new NotFoundException('Invitation not found or already accepted');
     }
 
     invitation.status = InvitationStatusEnum.ACCEPTED;
+    invitation.assessment.status = AssessmentStatusEnum.IDLE;
     await this.invitationsRepository.save(invitation);
+    await this.assessmentsRepository.save(invitation.assessment);
 
     await this.addCandidateToAssessment(
       invitation.assessment_id,

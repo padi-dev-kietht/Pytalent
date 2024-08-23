@@ -40,14 +40,31 @@ export class GamesController extends BaseController {
     );
   }
 
+  @Post(':id/end')
+  async endGame(
+    @Param('id') gameId: number,
+    @Body('assessmentId') assessmentId: number,
+    @Res() res: Response,
+  ): Promise<any> {
+    const gameEnded = await this.gameService.endGame(gameId, assessmentId);
+    return this.successResponse(
+      {
+        data: gameEnded,
+      },
+      res,
+    );
+  }
+
   @Post(':id/submit-answer')
   async submitGameAnswer(
-    @Param('id') gameId: number,
+    @Body('assessmentId') assessmentId: number,
     @Body('questionOrder') questionOrder: number,
     @Body('answer') answer: boolean,
     @Body('startTime') startTime: Date,
+    @Param('id') gameId: number,
   ): Promise<GameAnswer> {
     return this.gameService.submitGameAnswer(
+      assessmentId,
       gameId,
       questionOrder,
       answer,
