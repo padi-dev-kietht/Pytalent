@@ -10,7 +10,6 @@ import { GameQuestionsRepository } from '../repositories/gameQuestion.repository
 import { AssessmentsRepository } from '../repositories/assessment.repository';
 import { GameResultRepository } from '../repositories/gameResult.repository';
 import { AssessmentStatusEnum } from '../common/enum/assessment-status.enum';
-import { time } from 'console';
 
 @Injectable()
 export class GamesService {

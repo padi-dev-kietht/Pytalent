@@ -52,12 +52,23 @@ export class Users extends BaseEntity {
   )
   assessments: Assessments[];
 
-  @OneToMany(
+  @ManyToMany(
     () => Assessments,
-    (assessment: Assessments) => assessment.candidate,
+    (assessment: Assessments) => assessment.candidates,
     { cascade: true },
   )
-  assessments_candidate: Assessments[];
+  @JoinTable({
+    name: 'assessments_candidates',
+    joinColumn: {
+      name: 'candidate_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'assessment_id',
+      referencedColumnName: 'id',
+    },
+  })
+  assessments_candidates: Assessments[];
 
   @ManyToMany(() => Games, (game: Games) => game.hrs, { onDelete: 'CASCADE' })
   @JoinTable({

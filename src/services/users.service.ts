@@ -161,15 +161,12 @@ export class UsersService {
       candidate = await this.checkOrCreateCandidate({ email });
     }
 
-    // Check if the assessment exists or already assigned to a candidate or archived
+    // Check if the assessment exists or is archived
     const assessment: Assessments = await this.assessmentsRepository.findOne({
       where: { id: assessment_id },
     });
     if (!assessment) {
       throw new NotFoundException('Assessment not found');
-    }
-    if (assessment.candidate_id !== null) {
-      throw new NotFoundException('Assessment already assigned to a candidate');
     }
     if (assessment.is_archived) {
       throw new NotFoundException('Assessment is archived');
@@ -181,6 +178,7 @@ export class UsersService {
       assessment_id: assessment.id,
       status: InvitationStatusEnum.PENDING,
     });
+
     await this.invitationsRepository.save(invitation);
 
     // Send an email with the invitation link
@@ -193,25 +191,31 @@ export class UsersService {
   }
 
   async addCandidateToAssessment(assessment_id: number, candidate_id: number) {
-    const assessment: Assessments = await this.assessmentsRepository.findOne({
-      where: { id: assessment_id },
-    });
-    if (!assessment) {
-      throw new NotFoundException('Assessment not found');
-    }
-    if (assessment.is_archived) {
-      throw new NotFoundException('Assessment is archived');
-    }
+    try {
+      const assessment: Assessments = await this.assessmentsRepository.findOne({
+        where: { id: assessment_id },
+      });
+      if (!assessment) {
+        throw new NotFoundException('Assessment not found');
+      }
+      if (assessment.is_archived) {
+        throw new NotFoundException('Assessment is archived');
+      }
 
-    const candidate: Users = await this.usersRepository.findOne({
-      where: { id: candidate_id, role: RoleEnum.CANDIDATE },
-    });
-    if (!candidate) {
-      throw new NotFoundException('Candidate not found');
-    }
+      const candidate: Users = await this.usersRepository.findOne({
+        where: { id: candidate_id, role: RoleEnum.CANDIDATE },
+        relations: ['assessments_candidates'],
+      });
 
-    assessment.candidate = candidate;
-    await this.assessmentsRepository.save(assessment);
+      if (!candidate) {
+        throw new NotFoundException('Candidate not found');
+      }
+
+      candidate.assessments_candidates.push(assessment);
+      await this.usersRepository.save(candidate);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   // Candidate

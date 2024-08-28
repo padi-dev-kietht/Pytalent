@@ -43,6 +43,12 @@ export class UsersHrController extends BaseController {
     return this.successResponse(
       {
         message: 'Assessment created',
+        data: {
+          ...createAssessmentDto,
+          start_date:
+            createAssessmentDto.start_date || new Date().toISOString(),
+          end_date: createAssessmentDto.end_date || null,
+        },
       },
       res,
     );
@@ -60,6 +66,10 @@ export class UsersHrController extends BaseController {
     return this.successResponse(
       {
         message: 'Games added to assessment',
+        data: {
+          assessment_id: req.params.id,
+          gameIds: req.body.gameIds,
+        },
       },
       res,
     );
@@ -130,6 +140,7 @@ export class UsersHrController extends BaseController {
     return this.successResponse(
       {
         message: 'Candidate invited',
+        data: inviteCandidateDto,
       },
       res,
     );

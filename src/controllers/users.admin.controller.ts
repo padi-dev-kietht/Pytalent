@@ -34,6 +34,10 @@ export class UsersAdminController extends BaseController {
     return this.successResponse(
       {
         message: 'Success',
+        data: {
+          hr_id: req.body.id,
+          gameIds: req.body.gameIds,
+        },
       },
       res,
     );
@@ -42,16 +46,14 @@ export class UsersAdminController extends BaseController {
   // Creating a HR
   @Post('/hr/create')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.ADMIN]))
-  async create(
-    @Request() req,
-    @Body() createUserDto: CreateUserDto,
-    @Res() res: Response,
-  ) {
+  async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     try {
       await this.usersService.checkOrCreateHr(createUserDto);
+      const { password, ...responseDto } = createUserDto;
       return this.successResponse(
         {
           message: 'Success',
+          data: responseDto,
         },
         res,
       );

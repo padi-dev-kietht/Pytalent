@@ -56,11 +56,14 @@ export class Assessments extends BaseEntity {
   is_archived: boolean;
 
   //Associations
-  @ManyToOne(() => Users, (candidate: Users) => candidate.assessments, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'candidate_id' })
-  candidate: Users;
+  @ManyToMany(
+    () => Users,
+    (candidate: Users) => candidate.assessments_candidates,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  candidates: Users[];
 
   @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.assessment, {
     cascade: true,
