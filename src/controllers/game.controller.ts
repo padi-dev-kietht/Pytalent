@@ -30,8 +30,13 @@ export class GamesController extends BaseController {
     @Param('id') gameId: number,
     @Body('assessmentId') assessmentId: number,
     @Res() res: Response,
+    @Body('level') level?: number,
   ): Promise<any> {
-    const gameStarted = await this.gameService.startGame(gameId, assessmentId);
+    const gameStarted = await this.gameService.startGame(
+      gameId,
+      assessmentId,
+      level,
+    );
     return this.successResponse(
       {
         data: gameStarted,
@@ -55,7 +60,7 @@ export class GamesController extends BaseController {
     );
   }
 
-  @Post(':id/submit-answer')
+  @Post(':id/submit-answer-lqg')
   async submitGameAnswer(
     @Body('assessmentId') assessmentId: number,
     @Body('questionOrder') questionOrder: number,
@@ -67,6 +72,23 @@ export class GamesController extends BaseController {
       assessmentId,
       gameId,
       questionOrder,
+      answer,
+      startTime,
+    );
+  }
+
+  @Post(':id/submit-answer-mg')
+  async submitMemoryGameAnswer(
+    @Param('id') gameId: number,
+    @Body('assessmentId') assessmentId: number,
+    @Body('levelOrder') levelOrder: number,
+    @Body('answer') answer: Array<string>,
+    @Body('startTime') startTime: Date,
+  ): Promise<GameAnswer> {
+    return this.gameService.submitMemoryGameAnswer(
+      gameId,
+      levelOrder,
+      assessmentId,
       answer,
       startTime,
     );

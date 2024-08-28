@@ -19,8 +19,8 @@ export class MemoryGame extends BaseEntity {
   @Column({ type: 'integer' })
   input_time: number;
 
-  @Column({ type: 'simple-array' })
-  patterns: string[];
+  @Column({ type: 'text' })
+  patterns: string;
 
   // Associations
 
