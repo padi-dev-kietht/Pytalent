@@ -39,10 +39,6 @@ export class createAssessmentsTable1722501299267 implements MigrationInterface {
             type: 'integer',
           },
           {
-            name: 'candidate_id',
-            type: 'integer',
-          },
-          {
             name: 'is_archived',
             type: 'boolean',
           },
@@ -62,12 +58,6 @@ export class createAssessmentsTable1722501299267 implements MigrationInterface {
     await queryRunner.createForeignKeys('assessments', [
       new TableForeignKey({
         columnNames: ['created_by'],
-        referencedTableName: 'users',
-        referencedColumnNames: ['id'],
-        onDelete: 'CASCADE',
-      }),
-      new TableForeignKey({
-        columnNames: ['candidate_id'],
         referencedTableName: 'users',
         referencedColumnNames: ['id'],
         onDelete: 'CASCADE',

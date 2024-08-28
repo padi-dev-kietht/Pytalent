@@ -150,7 +150,7 @@ export class UsersService {
     return user;
   }
 
-  async inviteCandidate(inviteCandidateDto: InviteCandidateDto): Promise<void> {
+  async inviteCandidate(inviteCandidateDto: InviteCandidateDto): Promise<any> {
     const { email, assessment_id } = inviteCandidateDto;
 
     // Check if the candidate already exists, if not create one
@@ -188,6 +188,8 @@ export class UsersService {
       .subject('You are invited to participate in an assessment')
       .text(`Please click the following link to participate: ${invitationLink}`)
       .send();
+
+    return invitation;
   }
 
   async addCandidateToAssessment(assessment_id: number, candidate_id: number) {

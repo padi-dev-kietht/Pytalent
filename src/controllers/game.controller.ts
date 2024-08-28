@@ -49,9 +49,14 @@ export class GamesController extends BaseController {
   async endGame(
     @Param('id') gameId: number,
     @Body('assessmentId') assessmentId: number,
+    @Body('candidateId') candidateId: number,
     @Res() res: Response,
   ): Promise<any> {
-    const gameEnded = await this.gameService.endGame(gameId, assessmentId);
+    const gameEnded = await this.gameService.endGame(
+      gameId,
+      assessmentId,
+      candidateId,
+    );
     return this.successResponse(
       {
         data: gameEnded,

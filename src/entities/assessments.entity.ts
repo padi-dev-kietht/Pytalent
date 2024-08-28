@@ -42,9 +42,6 @@ export class Assessments extends BaseEntity {
   @Column({ type: 'int' })
   created_by: number;
 
-  @Column({ type: 'int', nullable: true })
-  candidate_id: number;
-
   @Column({
     type: 'varchar',
     default: AssessmentStatusEnum.IDLE,

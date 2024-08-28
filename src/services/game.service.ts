@@ -95,7 +95,11 @@ export class GamesService {
   }
 
   //Game end
-  async endGame(gameId: number, assessmentId: number): Promise<any> {
+  async endGame(
+    gameId: number,
+    assessmentId: number,
+    candidateId: number,
+  ): Promise<any> {
     const game = await this.gamesRepository.findOne({
       where: { id: gameId },
     });
@@ -111,8 +115,20 @@ export class GamesService {
       throw new NotFoundException('Assessment not found');
     }
 
+    const candidate = await this.assessmentsRepository.query(
+      `SELECT candidate_id FROM assessments_candidates WHERE candidate_id = $1 AND assessment_id = $2`,
+      [candidateId, assessmentId],
+    );
+
+    if (candidate.length === 0) {
+      throw new NotFoundException(
+        'Candidate is not assigned in that assessment',
+      );
+    }
+
     const assessmentGame = await this.assessmentsRepository.query(
-      `SELECT game_id FROM assessments_games WHERE game_id = ${gameId} AND assessment_id = ${assessmentId}`,
+      `SELECT game_id FROM assessments_games WHERE game_id = $1 AND assessment_id = $2`,
+      [gameId, assessmentId],
     );
 
     if (assessmentGame.length === 0) {
@@ -133,7 +149,7 @@ export class GamesService {
       );
 
       const gameResult = this.gameResultRepository.create({
-        candidate_id: assessment.candidate_id,
+        candidate_id: candidateId,
         game_id: gameId,
         assessment_id: assessmentId,
         score: totalScore,

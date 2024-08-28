@@ -136,11 +136,11 @@ export class UsersHrController extends BaseController {
     @Res() res: Response,
     @Body() inviteCandidateDto: InviteCandidateDto,
   ) {
-    await this.usersService.inviteCandidate(inviteCandidateDto);
+    const data = await this.usersService.inviteCandidate(inviteCandidateDto);
     return this.successResponse(
       {
         message: 'Candidate invited',
-        data: inviteCandidateDto,
+        data,
       },
       res,
     );
