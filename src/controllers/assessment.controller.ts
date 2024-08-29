@@ -84,7 +84,8 @@ export class AssessmentController extends BaseController {
   async addCandidateToAssessment(@Request() req, @Res() res: Response) {
     return this.successResponse(
       {
-        message: 'You have successfully accepted the invitation',
+        message:
+          'You have successfully accepted the invitation, please input your email to join the assessment',
       },
       res,
     );

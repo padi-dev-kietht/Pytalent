@@ -10,6 +10,7 @@ import { GameQuestionsRepository } from '../repositories/gameQuestion.repository
 import { AssessmentsRepository } from '../repositories/assessment.repository';
 import { GameResultRepository } from '../repositories/gameResult.repository';
 import { AssessmentStatusEnum } from '../common/enum/assessment-status.enum';
+import { GameQuestions } from '../entities/game_questions.entity';
 
 @Injectable()
 export class GamesService {
@@ -34,6 +35,12 @@ export class GamesService {
       throw new NotFoundException('Game not found');
     }
     return game;
+  }
+
+  async getGameQuestionsByAssessmentId(
+    assessment_id: number,
+  ): Promise<GameQuestions[]> {
+    return this.gameQuestionsRepository.find({ where: { assessment_id } });
   }
 
   // Game start
@@ -69,7 +76,6 @@ export class GamesService {
     const assessmentGame = await this.assessmentsRepository.query(
       `SELECT game_id FROM assessments_games WHERE game_id = ${gameId} AND assessment_id = ${assessmentId}`,
     );
-
     if (assessmentGame.length === 0) {
       throw new NotFoundException('Game is not assigned in that assessment');
     }
@@ -94,7 +100,10 @@ export class GamesService {
       await this.gameQuestionsRepository.save(gameQuestions);
 
       const gameStartedTimer = new Date();
-      return { candidateId, assessmentId, gameStartedTimer };
+      const questionsList = await this.getGameQuestionsByAssessmentId(
+        assessmentId,
+      );
+      return { candidateId, assessmentId, gameStartedTimer, questionsList };
     }
     if (game.game_type === 'memory') {
       const data = await this.getMemoryGameDetails(level);
