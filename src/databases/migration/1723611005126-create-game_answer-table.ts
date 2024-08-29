@@ -33,6 +33,14 @@ export class createGameAnswerTable1723611005126 implements MigrationInterface {
             type: 'integer',
           },
           {
+            name: 'assessment_id',
+            type: 'integer',
+          },
+          {
+            name: 'candidate_id',
+            type: 'integer',
+          },
+          {
             name: 'answer',
             type: 'text',
           },
@@ -82,6 +90,18 @@ export class createGameAnswerTable1723611005126 implements MigrationInterface {
         columnNames: ['level_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'memory_game',
+        onDelete: 'CASCADE',
+      }),
+      new TableForeignKey({
+        columnNames: ['assessment_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'assessments',
+        onDelete: 'CASCADE',
+      }),
+      new TableForeignKey({
+        columnNames: ['candidate_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'users',
         onDelete: 'CASCADE',
       }),
     ]);

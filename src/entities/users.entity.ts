@@ -15,6 +15,7 @@ import { Games } from './games.entity';
 import { Token } from './token.entity';
 import { GameResult } from './game_result.entity';
 import { Assessments } from './assessments.entity';
+import { GameAnswer } from './game_answer.entity';
 
 @Entity()
 export class Users extends BaseEntity {
@@ -32,6 +33,15 @@ export class Users extends BaseEntity {
   role: RoleEnum;
 
   //Associations
+  @OneToMany(
+    () => GameAnswer,
+    (gameAnswer: GameAnswer) => gameAnswer.candidate,
+    {
+      cascade: true,
+    },
+  )
+  game_answers: GameAnswer[];
+
   @OneToMany(() => Token, (token: Token) => token.user, { cascade: true })
   tokens: Token[];
 

@@ -132,15 +132,13 @@ export class UsersHrController extends BaseController {
   @Post('/invite')
   @UseGuards(JwtAuthGuard, new AuthorizationGuard([RoleEnum.HR]))
   async inviteCandidate(
-    @Request() req,
     @Res() res: Response,
     @Body() inviteCandidateDto: InviteCandidateDto,
   ) {
-    const data = await this.usersService.inviteCandidate(inviteCandidateDto);
+    await this.usersService.inviteCandidate(inviteCandidateDto);
     return this.successResponse(
       {
         message: 'Candidate invited',
-        data,
       },
       res,
     );

@@ -40,12 +40,12 @@ export class GamesService {
   async startGame(
     gameId: number,
     assessmentId: number,
+    candidateId: number,
     level?: number,
   ): Promise<any> {
     const game = await this.gamesRepository.findOne({
       where: { id: gameId },
     });
-
     if (!game) {
       throw new NotFoundException('Game not found');
     }
@@ -55,6 +55,15 @@ export class GamesService {
     });
     if (!assessment) {
       throw new NotFoundException('Assessment not found');
+    }
+
+    const candidate = await this.assessmentsRepository.query(
+      `SELECT candidate_id FROM assessments_candidates WHERE candidate_id = ${candidateId} AND assessment_id = ${assessmentId}`,
+    );
+    if (candidate.length === 0) {
+      throw new NotFoundException(
+        'Candidate is not assigned in that assessment',
+      );
     }
 
     const assessmentGame = await this.assessmentsRepository.query(
@@ -85,12 +94,12 @@ export class GamesService {
       await this.gameQuestionsRepository.save(gameQuestions);
 
       const gameStartedTimer = new Date();
-      return { assessmentId, gameStartedTimer };
+      return { candidateId, assessmentId, gameStartedTimer };
     }
     if (game.game_type === 'memory') {
       const data = await this.getMemoryGameDetails(level);
       const gameStartedTimer = new Date();
-      return { assessmentId, gameStartedTimer, data };
+      return { candidateId, assessmentId, gameStartedTimer, data };
     }
   }
 
@@ -216,6 +225,7 @@ export class GamesService {
 
   async submitGameAnswer(
     assessmentId: number,
+    candidateId: number,
     gameId: number,
     questionOrder: number,
     answer: boolean,
@@ -244,6 +254,16 @@ export class GamesService {
       throw new NotFoundException('Game not found');
     }
 
+    const candidate = await this.assessmentsRepository.query(
+      `SELECT candidate_id FROM assessments_candidates WHERE candidate_id = $1 AND assessment_id = $2`,
+      [candidateId, assessmentId],
+    );
+    if (candidate.length === 0) {
+      throw new NotFoundException(
+        'Candidate is not assigned in that assessment',
+      );
+    }
+
     const totalTime = 90; //fixes the total time to 90 seconds
     const isCorrect = question.question.is_conclusion_correct === answer;
 
@@ -254,6 +274,7 @@ export class GamesService {
       game_id: gameId,
       question_id: question.question.id,
       assessment_id: assessmentId,
+      candidate_id: candidateId,
       answer: answer.toString(),
       score: isCorrect ? 1 : 0,
       total_time: totalTime,
@@ -270,6 +291,7 @@ export class GamesService {
 
   async skipGameQuestion(
     assessmentId: number,
+    candidateId: number,
     gameId: number,
     questionOrder: number,
     startTime: Date,
@@ -287,6 +309,16 @@ export class GamesService {
       throw new NotFoundException('Game not found');
     }
 
+    const candidate = await this.assessmentsRepository.query(
+      `SELECT candidate_id FROM assessments_candidates WHERE candidate_id = $1 AND assessment_id = $2`,
+      [candidateId, assessmentId],
+    );
+    if (candidate.length === 0) {
+      throw new NotFoundException(
+        'Candidate is not assigned in that assessment',
+      );
+    }
+
     const totalTime = 90; //fixes the total time to 90 seconds
 
     const endTime = new Date();
@@ -296,6 +328,7 @@ export class GamesService {
       game_id: gameId,
       question_id: question.question.id,
       assessment_id: assessmentId,
+      candidate_id: candidateId,
       answer: 'skipped',
       score: 0,
       total_time: totalTime,
@@ -367,6 +400,7 @@ export class GamesService {
     gameId: number,
     levelOrder: number,
     assessmentId: number,
+    candidateId: number,
     userInput: string[],
     startTime: Date,
   ): Promise<any> {
@@ -376,6 +410,16 @@ export class GamesService {
       where: { id: levelOrder },
     });
 
+    const candidate = await this.assessmentsRepository.query(
+      `SELECT candidate_id FROM assessments_candidates WHERE candidate_id = $1 AND assessment_id = $2`,
+      [candidateId, assessmentId],
+    );
+    if (candidate.length === 0) {
+      throw new NotFoundException(
+        'Candidate is not assigned in that assessment',
+      );
+    }
+
     const endTime = new Date();
     const timeTaken = (endTime.getTime() - startTime.getTime()) / 1000;
 
@@ -383,6 +427,7 @@ export class GamesService {
     const gameAnswer = this.gameAnswerRepository.create({
       game_id: gameId,
       assessment_id: assessmentId,
+      candidate_id: candidateId,
       answer: userInput.join(','),
       score,
       total_time: memoryGameDetail.display_time,

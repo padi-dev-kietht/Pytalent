@@ -29,12 +29,14 @@ export class GamesController extends BaseController {
   async startGame(
     @Param('id') gameId: number,
     @Body('assessmentId') assessmentId: number,
+    @Body('candidateId') candidateId: number,
     @Res() res: Response,
     @Body('level') level?: number,
   ): Promise<any> {
     const gameStarted = await this.gameService.startGame(
       gameId,
       assessmentId,
+      candidateId,
       level,
     );
     return this.successResponse(
@@ -68,6 +70,7 @@ export class GamesController extends BaseController {
   @Post(':id/submit-answer-lqg')
   async submitGameAnswer(
     @Body('assessmentId') assessmentId: number,
+    @Body('candidateId') candidateId: number,
     @Body('questionOrder') questionOrder: number,
     @Body('answer') answer: boolean,
     @Body('startTime') startTime: Date,
@@ -75,6 +78,7 @@ export class GamesController extends BaseController {
   ): Promise<GameAnswer> {
     return this.gameService.submitGameAnswer(
       assessmentId,
+      candidateId,
       gameId,
       questionOrder,
       answer,
@@ -86,6 +90,7 @@ export class GamesController extends BaseController {
   async submitMemoryGameAnswer(
     @Param('id') gameId: number,
     @Body('assessmentId') assessmentId: number,
+    @Body('candidateId') candidateId: number,
     @Body('levelOrder') levelOrder: number,
     @Body('answer') answer: Array<string>,
     @Body('startTime') startTime: Date,
@@ -94,6 +99,7 @@ export class GamesController extends BaseController {
       gameId,
       levelOrder,
       assessmentId,
+      candidateId,
       answer,
       startTime,
     );
@@ -102,12 +108,14 @@ export class GamesController extends BaseController {
   @Post(':id/skip-question')
   async skipQuestion(
     @Body('assessmentId') assessmentId: number,
+    @Body('candidateId') candidateId: number,
     @Param('id') gameId: number,
     @Body('questionOrder') questionOrder: number,
     @Body('startTime') startTime: Date,
   ): Promise<GameAnswer> {
     return this.gameService.skipGameQuestion(
       assessmentId,
+      candidateId,
       gameId,
       questionOrder,
       startTime,

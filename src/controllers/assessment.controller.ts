@@ -1,4 +1,12 @@
-import { Controller, Get, Request, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AssessmentService } from '../services/assessment.service';
 import { BaseController } from './base.controller';
 import { UsersService } from '../services/users.service';
@@ -53,9 +61,27 @@ export class AssessmentController extends BaseController {
     );
   }
 
+  @Post('/invite/:invitation_id/authenticate')
+  async acceptInvitation(
+    @Request() req,
+    @Res() res: Response,
+    @Body() body: { email: string },
+  ) {
+    const data = await this.userService.joinAssessment(
+      body.email,
+      req.params.invitation_id,
+    );
+    return this.successResponse(
+      {
+        message: 'You joined the assessment',
+        data,
+      },
+      res,
+    );
+  }
+
   @Get('/invite/:invitation_id')
   async addCandidateToAssessment(@Request() req, @Res() res: Response) {
-    await this.userService.acceptInvitation(req.params.invitation_id);
     return this.successResponse(
       {
         message: 'You have successfully accepted the invitation',

@@ -9,6 +9,7 @@ import { BaseEntity } from './base.entity';
 import { Games } from './games.entity';
 import { MemoryGame } from './memory_game.entity';
 import { Assessments } from './assessments.entity';
+import { Users } from './users.entity';
 
 @Entity()
 export class GameAnswer extends BaseEntity {
@@ -27,6 +28,9 @@ export class GameAnswer extends BaseEntity {
   @Column({ type: 'integer', nullable: true })
   assessment_id: number;
 
+  @Column({ type: 'integer', nullable: true })
+  candidate_id: number;
+
   @Column({ type: 'text' })
   answer: string;
 
@@ -43,6 +47,12 @@ export class GameAnswer extends BaseEntity {
   time_taken: number;
 
   // Associations
+  @ManyToOne(() => Users, (user: Users) => user.game_answers, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'candidate_id' })
+  candidate: Users;
+
   @ManyToOne(
     () => Assessments,
     (assessment: Assessments) => assessment.game_answers,

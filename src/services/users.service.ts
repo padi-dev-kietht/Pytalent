@@ -19,6 +19,7 @@ import { InvitationStatusEnum } from '../common/enum/invitation-status.enum';
 import { InvitationsRepository } from '../repositories/invitation.repository';
 import { MailService } from '../common/lib/mail/mail.lib';
 import { AssessmentStatusEnum } from '../common/enum/assessment-status.enum';
+import { Invitations } from '../entities/invitations.entity';
 
 @Injectable()
 export class UsersService {
@@ -150,7 +151,7 @@ export class UsersService {
     return user;
   }
 
-  async inviteCandidate(inviteCandidateDto: InviteCandidateDto): Promise<any> {
+  async inviteCandidate(inviteCandidateDto: InviteCandidateDto): Promise<void> {
     const { email, assessment_id } = inviteCandidateDto;
 
     // Check if the candidate already exists, if not create one
@@ -188,8 +189,6 @@ export class UsersService {
       .subject('You are invited to participate in an assessment')
       .text(`Please click the following link to participate: ${invitationLink}`)
       .send();
-
-    return invitation;
   }
 
   async addCandidateToAssessment(assessment_id: number, candidate_id: number) {
@@ -221,13 +220,20 @@ export class UsersService {
   }
 
   // Candidate
-  async acceptInvitation(invitation_id: number): Promise<void> {
-    const invitation: any = await this.invitationsRepository.findOne({
+  async joinAssessment(
+    email: string,
+    invitation_id: number,
+  ): Promise<Invitations> {
+    const invitation: Invitations = await this.invitationsRepository.findOne({
       where: { id: invitation_id, status: InvitationStatusEnum.PENDING },
-      relations: ['assessment'],
+      relations: ['assessment', 'user'],
     });
     if (!invitation) {
       throw new NotFoundException('Invitation not found or already accepted');
+    }
+
+    if (invitation.user.email !== email) {
+      throw new NotFoundException('This email does not match the invitation');
     }
 
     invitation.status = InvitationStatusEnum.ACCEPTED;
@@ -239,5 +245,7 @@ export class UsersService {
       invitation.assessment_id,
       invitation.candidate_id,
     );
+
+    return invitation;
   }
 }
