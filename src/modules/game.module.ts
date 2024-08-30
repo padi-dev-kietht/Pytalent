@@ -11,6 +11,7 @@ import { GameQuestionsModule } from './gameQuestions.module';
 import { AssessmentsModule } from './assessment.module';
 import { GameResultModule } from './gameResult.module';
 import { InvitationsModule } from './invitations.module';
+import { GameCronModule } from './schedule.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { InvitationsModule } from './invitations.module';
     forwardRef(() => AssessmentsModule),
     GameResultModule,
     InvitationsModule,
+    GameCronModule,
   ],
   controllers: [GamesController],
   providers: [GamesService, GamesRepository],

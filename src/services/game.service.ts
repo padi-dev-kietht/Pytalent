@@ -16,6 +16,7 @@ import { GameResultRepository } from '../repositories/gameResult.repository';
 import { AssessmentStatusEnum } from '../common/enum/assessment-status.enum';
 import { GameQuestions } from '../entities/game_questions.entity';
 import { GameAnswerDto } from '../dtos/gameAnswerResponse.dto';
+import { GameCronService } from './schedule.service';
 
 @Injectable()
 export class GamesService {
@@ -27,6 +28,7 @@ export class GamesService {
     private gameQuestionsRepository: GameQuestionsRepository,
     private assessmentsRepository: AssessmentsRepository,
     private gameResultRepository: GameResultRepository,
+    private gameCronService: GameCronService,
   ) {}
 
   // Global
@@ -100,8 +102,11 @@ export class GamesService {
         game_id: gameId,
         assessment_id: assessmentId,
         order: index + 1,
+        created_at: new Date(),
       }));
-      await this.gameQuestionsRepository.save(gameQuestions);
+      await this.gameQuestionsRepository.save(gameQuestions, { reload: false });
+
+      this.gameCronService.enableCron();
 
       const gameStartedTimer = new Date();
       const questionsList = await this.getGameQuestionsByAssessmentId(
@@ -181,6 +186,10 @@ export class GamesService {
         assessment_id: assessmentId,
         score: totalScore,
       });
+
+      assessment.status = AssessmentStatusEnum.COMPLETED;
+      await this.assessmentsRepository.save(assessment);
+      this.gameCronService.disableCron();
 
       await this.gameResultRepository.save(gameResult);
     }
@@ -282,11 +291,6 @@ export class GamesService {
       );
     }
 
-    const answerResult = await this.gameAnswerRepository.query(
-      `SELECT SUM(score) as totalScore FROM game_answer WHERE assessment_id = $1 AND candidate_id = $2 AND game_id = $3`,
-      [assessmentId, candidateId, gameId],
-    );
-
     const totalTime = 90; //fixes the total time to 90 seconds
     const isCorrect = question.question.is_conclusion_correct === answer;
 
@@ -306,12 +310,6 @@ export class GamesService {
     });
 
     if (timeTaken > totalTime) {
-      await this.gameResultRepository.save({
-        candidate_id: candidateId,
-        game_id: gameId,
-        assessment_id: assessmentId,
-        score: answerResult[0].totalScore,
-      });
       throw new RequestTimeoutException('Timed out');
     }
 
@@ -362,11 +360,6 @@ export class GamesService {
       );
     }
 
-    const answerResult = await this.gameAnswerRepository.query(
-      `SELECT SUM(score) as totalScore FROM game_answer WHERE assessment_id = $1 AND candidate_id = $2 AND game_id = $3`,
-      [assessmentId, candidateId, gameId],
-    );
-
     const totalTime = 90; //fixes the total time to 90 seconds
 
     const endTime = new Date();
@@ -385,12 +378,6 @@ export class GamesService {
     });
 
     if (timeTaken > totalTime) {
-      await this.gameResultRepository.save({
-        candidate_id: candidateId,
-        game_id: gameId,
-        assessment_id: assessmentId,
-        score: answerResult[0].totalScore,
-      });
       throw new RequestTimeoutException('Timed out');
     }
 
@@ -504,14 +491,6 @@ export class GamesService {
       is_correct: isValid,
     });
 
-    const answerResult = await this.gameAnswerRepository.query(
-      `SELECT SUM(score) as totalScore FROM game_answer WHERE assessment_id = $1 AND candidate_id = $2 AND game_id = $3`,
-      [assessmentId, candidateId, gameId],
-    );
-
-    if (gameAnswer.time_taken > gameAnswer.total_time) {
-      throw new RequestTimeoutException('Timed out');
-    }
     if (
       !gameAnswer.is_correct ||
       gameAnswer.time_taken > gameAnswer.total_time
@@ -523,12 +502,6 @@ export class GamesService {
         time_taken: savedGameAnswer.time_taken,
         isCorrect: savedGameAnswer.is_correct,
       };
-      await this.gameResultRepository.save({
-        candidate_id: candidateId,
-        game_id: gameId,
-        assessment_id: assessmentId,
-        score: answerResult[0].totalScore,
-      });
       return { gameAnswers, message: `Game Over!` };
     } else {
       const nextQuestion = await this.getMemoryGameDetails(levelOrder + 1);
