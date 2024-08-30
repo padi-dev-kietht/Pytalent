@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   Injectable,
   NotFoundException,
   RequestTimeoutException,
@@ -270,6 +269,11 @@ export class GamesService {
       );
     }
 
+    const answerResult = await this.gameAnswerRepository.query(
+      `SELECT SUM(score) as totalScore FROM game_answer WHERE assessment_id = $1 AND candidate_id = $2 AND game_id = $3`,
+      [assessmentId, candidateId, gameId],
+    );
+
     const totalTime = 90; //fixes the total time to 90 seconds
     const isCorrect = question.question.is_conclusion_correct === answer;
 
@@ -289,6 +293,12 @@ export class GamesService {
     });
 
     if (timeTaken > totalTime) {
+      await this.gameResultRepository.save({
+        candidate_id: candidateId,
+        game_id: gameId,
+        assessment_id: assessmentId,
+        score: answerResult[0].totalScore,
+      });
       throw new RequestTimeoutException('Timed out');
     }
 
@@ -337,6 +347,11 @@ export class GamesService {
       );
     }
 
+    const answerResult = await this.gameAnswerRepository.query(
+      `SELECT SUM(score) as totalScore FROM game_answer WHERE assessment_id = $1 AND candidate_id = $2 AND game_id = $3`,
+      [assessmentId, candidateId, gameId],
+    );
+
     const totalTime = 90; //fixes the total time to 90 seconds
 
     const endTime = new Date();
@@ -355,6 +370,12 @@ export class GamesService {
     });
 
     if (timeTaken > totalTime) {
+      await this.gameResultRepository.save({
+        candidate_id: candidateId,
+        game_id: gameId,
+        assessment_id: assessmentId,
+        score: answerResult[0].totalScore,
+      });
       throw new RequestTimeoutException('Timed out');
     }
 
@@ -474,7 +495,10 @@ export class GamesService {
     if (gameAnswer.time_taken > gameAnswer.total_time) {
       throw new RequestTimeoutException('Timed out');
     }
-    if (!gameAnswer.is_correct) {
+    if (
+      !gameAnswer.is_correct ||
+      gameAnswer.time_taken > gameAnswer.total_time
+    ) {
       const savedGameAnswer = await this.gameAnswerRepository.save(gameAnswer);
       const gameAnswers: GameAnswerDto = {
         answer: savedGameAnswer.answer,
