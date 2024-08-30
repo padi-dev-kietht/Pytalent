@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { LogicalQuestionsRepository } from '../repositories/logicalQuestion.repository';
 import { GamesRepository } from '../repositories/game.repository';
 import { GameAnswerRepository } from '../repositories/gameAnswer.repository';
@@ -11,6 +16,7 @@ import { AssessmentsRepository } from '../repositories/assessment.repository';
 import { GameResultRepository } from '../repositories/gameResult.repository';
 import { AssessmentStatusEnum } from '../common/enum/assessment-status.enum';
 import { GameQuestions } from '../entities/game_questions.entity';
+import { GameAnswerDto } from '../dtos/gameAnswerResponse.dto';
 
 @Injectable()
 export class GamesService {
@@ -84,12 +90,6 @@ export class GamesService {
     await this.assessmentsRepository.save(assessment);
 
     if (game.game_type === 'logical') {
-      // Delete previous game questions
-      await this.gameQuestionsRepository.delete({
-        game_id: gameId,
-        assessment_id: assessmentId,
-      });
-
       const randomQuestionsList = await this.getRandomQuestions();
       const gameQuestions = randomQuestionsList.map((question, index) => ({
         question_id: question.id,
@@ -121,7 +121,6 @@ export class GamesService {
     const game = await this.gamesRepository.findOne({
       where: { id: gameId },
     });
-
     if (!game) {
       throw new NotFoundException('Game not found');
     }
@@ -137,7 +136,6 @@ export class GamesService {
       `SELECT candidate_id FROM assessments_candidates WHERE candidate_id = $1 AND assessment_id = $2`,
       [candidateId, assessmentId],
     );
-
     if (candidate.length === 0) {
       throw new NotFoundException(
         'Candidate is not assigned in that assessment',
@@ -148,7 +146,6 @@ export class GamesService {
       `SELECT game_id FROM assessments_games WHERE game_id = $1 AND assessment_id = $2`,
       [gameId, assessmentId],
     );
-
     if (assessmentGame.length === 0) {
       throw new NotFoundException('Game is not assigned in that assessment');
     }
@@ -292,10 +289,22 @@ export class GamesService {
     });
 
     if (timeTaken > totalTime) {
-      return 'Timed out';
+      throw new RequestTimeoutException('Timed out');
     }
 
-    return this.gameAnswerRepository.save(gameAnswer);
+    const nextQuestion = await this.gameQuestionsRepository.findOne({
+      where: { game: { id: gameId }, order: questionOrder + 1 },
+      select: ['id', 'order'],
+      relations: ['question'],
+    });
+
+    const savedGameAnswer = await this.gameAnswerRepository.save(gameAnswer);
+    const gameAnswers: GameAnswerDto = {
+      answer: savedGameAnswer.answer,
+      isCorrect: savedGameAnswer.is_correct,
+      nextQuestion: nextQuestion,
+    };
+    return gameAnswers;
   }
 
   async skipGameQuestion(
@@ -346,10 +355,22 @@ export class GamesService {
     });
 
     if (timeTaken > totalTime) {
-      return 'Timed out';
+      throw new RequestTimeoutException('Timed out');
     }
 
-    return this.gameAnswerRepository.save(gameAnswer);
+    const nextQuestion = await this.gameQuestionsRepository.findOne({
+      where: { game: { id: gameId }, order: questionOrder + 1 },
+      select: ['id', 'order'],
+      relations: ['question'],
+    });
+
+    const savedGameAnswer = await this.gameAnswerRepository.save(gameAnswer);
+    const gameAnswers: GameAnswerDto = {
+      answer: savedGameAnswer.answer,
+      isCorrect: savedGameAnswer.is_correct,
+      nextQuestion: nextQuestion,
+    };
+    return gameAnswers;
   }
 
   //Memory Game
@@ -376,12 +397,13 @@ export class GamesService {
 
   async getMemoryGameDetails(level: number): Promise<MemoryGame> {
     const number_of_patterns = level;
-    const display_time = level;
-    const input_time = level <= 2 ? 3 : level;
+    const display_time = level * 30;
+    const input_time = level <= 2 ? 30 : level * 30;
     const patterns = this.generatePatterns(number_of_patterns);
 
     return this.memoryGameRepository.save({
       level,
+      order: level,
       number_of_patterns,
       display_time,
       input_time,
@@ -390,11 +412,11 @@ export class GamesService {
   }
 
   async validateMemoryGameInput(
-    gameId: number,
+    levelOrder: number,
     userInput: string[],
   ): Promise<boolean> {
     const memoryGame = await this.memoryGameRepository.findOne({
-      where: { id: gameId },
+      where: { order: levelOrder },
     });
 
     if (!memoryGame) {
@@ -416,7 +438,7 @@ export class GamesService {
     const isValid = await this.validateMemoryGameInput(levelOrder, userInput);
 
     const memoryGameDetail = await this.memoryGameRepository.findOne({
-      where: { id: levelOrder },
+      where: { order: levelOrder },
     });
 
     const candidate = await this.assessmentsRepository.query(
@@ -444,11 +466,37 @@ export class GamesService {
       is_correct: isValid,
     });
 
-    if (gameAnswer.time_taken > gameAnswer.total_time) {
-      return 'Timed out';
-    }
+    const answerResult = await this.gameAnswerRepository.query(
+      `SELECT SUM(score) as totalScore FROM game_answer WHERE assessment_id = $1 AND candidate_id = $2 AND game_id = $3`,
+      [assessmentId, candidateId, gameId],
+    );
 
-    await this.gameAnswerRepository.save(gameAnswer);
-    return gameAnswer;
+    if (gameAnswer.time_taken > gameAnswer.total_time) {
+      throw new RequestTimeoutException('Timed out');
+    }
+    if (!gameAnswer.is_correct) {
+      const savedGameAnswer = await this.gameAnswerRepository.save(gameAnswer);
+      const gameAnswers: GameAnswerDto = {
+        answer: savedGameAnswer.answer,
+        isCorrect: savedGameAnswer.is_correct,
+      };
+      await this.gameResultRepository.save({
+        candidate_id: candidateId,
+        game_id: gameId,
+        assessment_id: assessmentId,
+        score: answerResult[0].totalScore,
+      });
+      return { gameAnswers, message: `Game Over!` };
+    } else {
+      const nextQuestion = await this.getMemoryGameDetails(levelOrder + 1);
+
+      const savedGameAnswer = await this.gameAnswerRepository.save(gameAnswer);
+      const gameAnswers: GameAnswerDto = {
+        answer: savedGameAnswer.answer,
+        isCorrect: savedGameAnswer.is_correct,
+        nextQuestion: nextQuestion,
+      };
+      return gameAnswers;
+    }
   }
 }

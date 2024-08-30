@@ -3,15 +3,11 @@ import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { BaseController } from './base.controller';
 import { GamesService } from '../services/game.service';
 import { GameAnswer } from '../entities/game_answer.entity';
-import { GamesRepository } from '../repositories/game.repository';
 import { Response } from 'express';
 
 @Controller('games')
 export class GamesController extends BaseController {
-  constructor(
-    private gameRepository: GamesRepository,
-    private gameService: GamesService,
-  ) {
+  constructor(private gameService: GamesService) {
     super();
   }
 
@@ -75,14 +71,22 @@ export class GamesController extends BaseController {
     @Body('answer') answer: boolean,
     @Body('startTime') startTime: Date,
     @Param('id') gameId: number,
-  ): Promise<GameAnswer> {
-    return this.gameService.submitGameAnswer(
+    @Res() res: Response,
+  ): Promise<any> {
+    const gameAnswer = await this.gameService.submitGameAnswer(
       assessmentId,
       candidateId,
       gameId,
       questionOrder,
       answer,
       startTime,
+    );
+    return this.successResponse(
+      {
+        data: gameAnswer,
+        message: 'Answer submitted successfully',
+      },
+      res,
     );
   }
 
@@ -94,14 +98,22 @@ export class GamesController extends BaseController {
     @Body('levelOrder') levelOrder: number,
     @Body('answer') answer: Array<string>,
     @Body('startTime') startTime: Date,
-  ): Promise<GameAnswer> {
-    return this.gameService.submitMemoryGameAnswer(
+    @Res() res: Response,
+  ): Promise<any> {
+    const gameAnswer = await this.gameService.submitMemoryGameAnswer(
       gameId,
       levelOrder,
       assessmentId,
       candidateId,
       answer,
       startTime,
+    );
+    return this.successResponse(
+      {
+        data: gameAnswer,
+        message: 'Answer submitted successfully',
+      },
+      res,
     );
   }
 

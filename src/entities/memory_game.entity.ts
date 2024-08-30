@@ -22,6 +22,9 @@ export class MemoryGame extends BaseEntity {
   @Column({ type: 'text' })
   patterns: string;
 
+  @Column({ type: 'integer', default: 1 })
+  order: number;
+
   // Associations
 
   @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.level, {
