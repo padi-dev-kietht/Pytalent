@@ -1,6 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { GameAnswer } from './game_answer.entity';
 
 @Entity()
 export class MemoryGame extends BaseEntity {
@@ -25,10 +24,8 @@ export class MemoryGame extends BaseEntity {
   @Column({ type: 'integer', default: 1 })
   order: number;
 
-  // Associations
+  @Column({ type: 'integer', nullable: true })
+  assessment_id: number;
 
-  @OneToMany(() => GameAnswer, (answer: GameAnswer) => answer.level, {
-    cascade: true,
-  })
-  game_answers: GameAnswer[];
+  // Associations
 }

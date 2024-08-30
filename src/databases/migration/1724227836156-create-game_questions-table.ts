@@ -52,12 +52,6 @@ export class createGameQuestionsTable1724227836156
 
     await queryRunner.createForeignKeys('game_questions', [
       new TableForeignKey({
-        columnNames: ['game_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'games',
-        onDelete: 'CASCADE',
-      }),
-      new TableForeignKey({
         columnNames: ['question_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'logical_questions',

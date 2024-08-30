@@ -6,7 +6,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Games } from './games.entity';
 import { LogicalQuestions } from './logical_questions.entity';
 import { Assessments } from './assessments.entity';
 
@@ -16,9 +15,6 @@ export class GameQuestions extends BaseEntity {
   id: number;
 
   @Column({ type: 'integer' })
-  game_id: number;
-
-  @Column({ type: 'integer' })
   question_id: number;
 
   @Column({ type: 'integer' })
@@ -26,12 +22,6 @@ export class GameQuestions extends BaseEntity {
 
   @Column({ type: 'integer' })
   order: number;
-
-  @ManyToOne(() => Games, (game: Games) => game.game_questions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'game_id' })
-  game: Games;
 
   @ManyToOne(
     () => Assessments,

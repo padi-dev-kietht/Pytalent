@@ -12,7 +12,6 @@ import { Users } from './users.entity';
 import { GameResult } from './game_result.entity';
 import { GameTypeEnum } from '../common/enum/game-type.enum';
 import { GameAnswer } from './game_answer.entity';
-import { GameQuestions } from './game_questions.entity';
 
 @Entity()
 export class Games extends BaseEntity {
@@ -42,11 +41,6 @@ export class Games extends BaseEntity {
     cascade: true,
   })
   game_answers: GameAnswer[];
-
-  @OneToMany(() => GameQuestions, (question: GameQuestions) => question.game, {
-    cascade: true,
-  })
-  game_questions: GameQuestions[];
 
   @ManyToMany(
     () => Assessments,

@@ -89,6 +89,11 @@ export class GamesService {
     await this.assessmentsRepository.save(assessment);
 
     if (game.game_type === 'logical') {
+      // Delete previous game questions
+      await this.gameQuestionsRepository.delete({
+        assessment_id: assessmentId,
+      });
+
       const randomQuestionsList = await this.getRandomQuestions();
       const gameQuestions = randomQuestionsList.map((question, index) => ({
         question_id: question.id,
@@ -105,6 +110,14 @@ export class GamesService {
       return { candidateId, assessmentId, gameStartedTimer, questionsList };
     }
     if (game.game_type === 'memory') {
+      if (!level) {
+        throw new NotFoundException('Level is required for memory game');
+      }
+      //Delete previous memory game
+      await this.memoryGameRepository.delete({
+        assessment_id: assessmentId,
+      });
+
       const data = await this.getMemoryGameDetails(level);
       const gameStartedTimer = new Date();
       return { candidateId, assessmentId, gameStartedTimer, data };
@@ -244,7 +257,7 @@ export class GamesService {
     }
 
     const question = await this.gameQuestionsRepository.findOne({
-      where: { game: { id: gameId }, order: questionOrder },
+      where: { order: questionOrder },
       relations: ['question'],
     });
     if (!question) {
@@ -303,7 +316,7 @@ export class GamesService {
     }
 
     const nextQuestion = await this.gameQuestionsRepository.findOne({
-      where: { game: { id: gameId }, order: questionOrder + 1 },
+      where: { order: questionOrder + 1 },
       select: ['id', 'order'],
       relations: ['question'],
     });
@@ -311,6 +324,8 @@ export class GamesService {
     const savedGameAnswer = await this.gameAnswerRepository.save(gameAnswer);
     const gameAnswers: GameAnswerDto = {
       answer: savedGameAnswer.answer,
+      totalTime: savedGameAnswer.total_time,
+      time_taken: savedGameAnswer.time_taken,
       isCorrect: savedGameAnswer.is_correct,
       nextQuestion: nextQuestion,
     };
@@ -325,7 +340,7 @@ export class GamesService {
     startTime: Date,
   ): Promise<any> {
     const question = await this.gameQuestionsRepository.findOne({
-      where: { game: { id: gameId }, order: questionOrder },
+      where: { order: questionOrder },
       relations: ['question'],
     });
     if (!question) {
@@ -380,7 +395,7 @@ export class GamesService {
     }
 
     const nextQuestion = await this.gameQuestionsRepository.findOne({
-      where: { game: { id: gameId }, order: questionOrder + 1 },
+      where: { order: questionOrder + 1 },
       select: ['id', 'order'],
       relations: ['question'],
     });
@@ -388,6 +403,8 @@ export class GamesService {
     const savedGameAnswer = await this.gameAnswerRepository.save(gameAnswer);
     const gameAnswers: GameAnswerDto = {
       answer: savedGameAnswer.answer,
+      totalTime: savedGameAnswer.total_time,
+      time_taken: savedGameAnswer.time_taken,
       isCorrect: savedGameAnswer.is_correct,
       nextQuestion: nextQuestion,
     };
@@ -502,6 +519,8 @@ export class GamesService {
       const savedGameAnswer = await this.gameAnswerRepository.save(gameAnswer);
       const gameAnswers: GameAnswerDto = {
         answer: savedGameAnswer.answer,
+        totalTime: savedGameAnswer.total_time,
+        time_taken: savedGameAnswer.time_taken,
         isCorrect: savedGameAnswer.is_correct,
       };
       await this.gameResultRepository.save({
@@ -517,6 +536,8 @@ export class GamesService {
       const savedGameAnswer = await this.gameAnswerRepository.save(gameAnswer);
       const gameAnswers: GameAnswerDto = {
         answer: savedGameAnswer.answer,
+        totalTime: savedGameAnswer.total_time,
+        time_taken: savedGameAnswer.time_taken,
         isCorrect: savedGameAnswer.is_correct,
         nextQuestion: nextQuestion,
       };

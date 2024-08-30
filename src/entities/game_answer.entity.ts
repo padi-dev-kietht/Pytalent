@@ -7,7 +7,6 @@ import {
 } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Games } from './games.entity';
-import { MemoryGame } from './memory_game.entity';
 import { Assessments } from './assessments.entity';
 import { Users } from './users.entity';
 
@@ -21,9 +20,6 @@ export class GameAnswer extends BaseEntity {
 
   @Column({ type: 'integer', nullable: true })
   question_id: number;
-
-  @Column({ type: 'integer', nullable: true })
-  level_id: number;
 
   @Column({ type: 'integer', nullable: true })
   assessment_id: number;
@@ -68,10 +64,4 @@ export class GameAnswer extends BaseEntity {
   })
   @JoinColumn({ name: 'game_id' })
   game: Games;
-
-  @ManyToOne(() => MemoryGame, (memory: MemoryGame) => memory.game_answers, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'level_id' })
-  level: MemoryGame;
 }

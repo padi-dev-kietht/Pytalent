@@ -87,12 +87,6 @@ export class createGameAnswerTable1723611005126 implements MigrationInterface {
         onDelete: 'CASCADE',
       }),
       new TableForeignKey({
-        columnNames: ['level_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'memory_game',
-        onDelete: 'CASCADE',
-      }),
-      new TableForeignKey({
         columnNames: ['assessment_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'assessments',
