@@ -141,7 +141,6 @@ export class AssessmentService {
 
   async getAssessmentById(id: number, hr_id: number): Promise<Assessments> {
     const assessment: Assessments = await this.assessmentsRepository.findOne({
-      relations: ['created_by_hr'],
       where: { id, created_by: hr_id },
     });
     if (!assessment) {

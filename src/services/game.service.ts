@@ -17,6 +17,7 @@ import { AssessmentStatusEnum } from '../common/enum/assessment-status.enum';
 import { GameQuestions } from '../entities/game_questions.entity';
 import { GameAnswerDto } from '../dtos/gameAnswerResponse.dto';
 import { GameCronService } from './schedule.service';
+import { GameResult } from '../entities/game_result.entity';
 
 @Injectable()
 export class GamesService {
@@ -48,6 +49,20 @@ export class GamesService {
     assessment_id: number,
   ): Promise<GameQuestions[]> {
     return this.gameQuestionsRepository.find({ where: { assessment_id } });
+  }
+
+  async getGameResultByAssessmentId(
+    assessment_id: number,
+    hr_id: number,
+  ): Promise<GameResult[]> {
+    const gameResults: GameResult[] = await this.gameResultRepository.find({
+      where: { assessment_id },
+    });
+    if (gameResults.length === 0) {
+      throw new NotFoundException('Game Result not found');
+    }
+
+    return gameResults;
   }
 
   // Game start
