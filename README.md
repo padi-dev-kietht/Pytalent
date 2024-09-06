@@ -15,6 +15,8 @@
     POST: /create - Create new HR {body: {email, password, role}}
     POST: /games/add - Add games to Hr_games {body: {id, gameIds[]}}
 
+<br />
+
 ## HR features
 
     POST: /login - Login for HR {body: {email, password}}
@@ -34,6 +36,8 @@
     PATCH: /update/:assessment_id - Update an Assessment by ID
     DELETE: /delete/:assessment_id - Delete an Assessment by ID
 
+<br />
+
 ## Candidate/Game features
 
 ### /assessments/invite/:invitation_id/authenticate
@@ -49,4 +53,5 @@
     POST: /end - End Game by ID {body: {assessmentId, candidateId}}
 
 <hr />
-Project Database: https://dbdiagram.io/d/Pytalent-66aaf14f8b4bb5230ee88d5f
+
+- Project Database: https://dbdiagram.io/d/Pytalent-66aaf14f8b4bb5230ee88d5f
