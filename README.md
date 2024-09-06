@@ -1,99 +1,49 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# PYTALENT PROJECT API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+- Description: A game-based testing system used for candidates during recruitment, contains Admin webpage, API and website. This is backend API for the project.
+- Technologies used: NestJS, TypeORM, SQLite, TypeORM-Seeding,...
+- Cronjob enabled for games.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## API Usage
 
-## Description
+### Admin features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+POST: /login - Login for admin {body: {email, password}}
 
-## Setting env file
+#### /admin/users/hr
 
-ENV file names will be different in different environments.
+POST: /create - Create new HR {body: {email, password, role}}
+POST: /games/add - Add games to Hr_games {body: {id, gameIds[]}}
 
-At the moment, we have 4 environments:
+### HR features
 
-| Environment  | ENV file name | Usage |
-|:-------------|:--------------|:------|
-| Development | .env.development.local | For developers's local environment |
-| Test | .env.test.local | For jest test, please do not modify this file |
-| Staging | .env.staging.local | For staging server, you have to create this file yourself |
-| Production | env.production.local | For production server, you have to create this yourself |
+POST: /login - Login for HR {body: {email, password}}
+GET: /assessments - Get All Assessments that HR created
+GET: /assessments/:assessment_id - Get One Assessment that HR created by ID
+GET: /assessments/:assessment_id/result - Get One Assessment Result by ID
 
-> Note: `ENV file name === ".env.${process.env.NODE_ENV || 'development'}.local"`
-## Installation
+#### /hr
 
-```bash
-$ yarn install
-```
+POST: /invite - Invite new Candidate {body: {email, assessment_id}}
 
-## Migration - Seeds
+#### /hr/assessments
 
-```bash
-$ yarn db:refresh
-```
+POST: /create - Create new Assessment {body: {name, description, (start_date), (end_date)}}
+POST: /:assessment_id/add-games - Add games to Assessment by ID {body: {gameIds[]}}
+PATCH: /archive/:assessment_id - Archive an Assessment by ID
+PATCH: /update/:assessment_id - Update an Assessment by ID
+DELETE: /delete/:assessment_id - Delete an Assessment by ID
 
-## Running the app
+### Candidate/Game features
 
-```bash
-# development
-$ yarn run start
+#### /assessments/invite/:invitation_id/authenticate
 
-# watch mode
-$ yarn run start:dev
+POST: / - authenticate Candidate that is invited to the exact Assessment within the invitation {body: {email}}
 
-# production mode
-$ yarn run start:prod
-```
+#### /games/:game_id
 
-## Test
-
-```bash
-# tests all
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# unit tests
-$ yarn run test:unit
-
-# validation tests
-$ yarn run test:validation
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-### For windows users
-> If you are using windows OS you may want to see below thread for run `npm script` smoothy </br>
-https://stackoverflow.com/questions/23243353/how-to-set-shell-for-npm-run-scripts-in-windows
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+POST: /start - Start Game by ID {body: {assessmentId, candidateId, (level)}}
+POST: /submit-answer-lqg - Submit answer for Logical_questions Game {body: {assessmentId, candidateId, questionOrder, answer, startTime}}
+POST: /skip-question - Skip question for Logical_questions Game {body: {assessmentId, candidateId, questionOrder, startTime}}
+POST: /submit-answer-mg - Submit answer for Memory Game {body: {assessmentId, candidateId, levelOrder, answer, startTime}}
+POST: /end - End Game by ID {body: {assessmentId, candidateId}}
