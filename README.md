@@ -47,3 +47,5 @@
     POST: /skip-question - Skip question for Logical_questions Game {body: {assessmentId, candidateId, questionOrder, startTime}}
     POST: /submit-answer-mg - Submit answer for Memory Game {body: {assessmentId, candidateId, levelOrder, answer, startTime}}
     POST: /end - End Game by ID {body: {assessmentId, candidateId}}
+
+- Project Database: https://dbdiagram.io/d/Pytalent-66aaf14f8b4bb5230ee88d5f
