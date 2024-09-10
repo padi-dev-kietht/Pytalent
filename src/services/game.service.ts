@@ -138,7 +138,7 @@ export class GamesService {
         assessment_id: assessmentId,
       });
 
-      const data = await this.getMemoryGameDetails(level);
+      const data = await this.getMemoryGameDetails(level, assessmentId);
       const gameStartedTimer = new Date();
       return { candidateId, assessmentId, gameStartedTimer, data };
     }
@@ -435,7 +435,10 @@ export class GamesService {
     return patterns;
   }
 
-  async getMemoryGameDetails(level: number): Promise<MemoryGame> {
+  async getMemoryGameDetails(
+    level: number,
+    assessmentId: number,
+  ): Promise<MemoryGame> {
     const number_of_patterns = level;
     const display_time = level * 30;
     const input_time = level <= 2 ? 30 : level * 30;
@@ -447,6 +450,7 @@ export class GamesService {
       number_of_patterns,
       display_time,
       input_time,
+      assessment_id: assessmentId,
       patterns: patterns.join(','),
     });
   }
@@ -519,7 +523,10 @@ export class GamesService {
       };
       return { gameAnswers, message: `Game Over!` };
     } else {
-      const nextQuestion = await this.getMemoryGameDetails(levelOrder + 1);
+      const nextQuestion = await this.getMemoryGameDetails(
+        levelOrder + 1,
+        assessmentId,
+      );
 
       const savedGameAnswer = await this.gameAnswerRepository.save(gameAnswer);
       const gameAnswers: GameAnswerDto = {
