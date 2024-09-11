@@ -1,40 +1,54 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Param, Post, Res } from '@nestjs/common';
 
 import { BaseController } from './base.controller';
 import { GamesService } from '../services/game.service';
 import { GameAnswer } from '../entities/game_answer.entity';
 import { Response } from 'express';
+import { LogicalQuestionsGameService } from '../services/logicalQuestionsGame.service';
 
 @Controller('games')
 export class GamesController extends BaseController {
-  constructor(private gameService: GamesService) {
+  constructor(
+    private logicalQuestionsGameService: LogicalQuestionsGameService,
+    private gameService: GamesService,
+  ) {
     super();
   }
 
-  @Get()
-  async getGames(): Promise<any> {
-    return this.gameService.getGames();
-  }
-
-  @Get(':id')
-  async getGameById(@Param('id') gameId: number): Promise<any> {
-    return this.gameService.getGameById(gameId);
-  }
-
-  @Post(':id/start')
-  async startGame(
+  @Post(':id/start-lqg')
+  async startGameLQG(
     @Param('id') gameId: number,
     @Body('assessmentId') assessmentId: number,
     @Body('candidateId') candidateId: number,
     @Res() res: Response,
-    @Body('level') level?: number,
   ): Promise<any> {
-    const gameStarted = await this.gameService.startGame(
-      gameId,
-      assessmentId,
-      candidateId,
-      level,
+    const gameStarted =
+      await this.logicalQuestionsGameService.playLogicalQuestionsGame(
+        gameId,
+        assessmentId,
+        candidateId,
+      );
+    return this.successResponse(
+      {
+        data: gameStarted,
+      },
+      res,
     );
+  }
+
+  @Post(':id/start-mg')
+  async startGameMG(
+    @Param('id') gameId: number,
+    @Body('assessmentId') assessmentId: number,
+    @Body('candidateId') candidateId: number,
+    @Res() res: Response,
+  ): Promise<any> {
+    const gameStarted =
+      await this.logicalQuestionsGameService.playLogicalQuestionsGame(
+        gameId,
+        assessmentId,
+        candidateId,
+      );
     return this.successResponse(
       {
         data: gameStarted,
@@ -73,7 +87,7 @@ export class GamesController extends BaseController {
     @Param('id') gameId: number,
     @Res() res: Response,
   ): Promise<any> {
-    const gameAnswer = await this.gameService.submitGameAnswer(
+    const gameAnswer = await this.logicalQuestionsGameService.submitGameAnswer(
       assessmentId,
       candidateId,
       gameId,
@@ -125,7 +139,7 @@ export class GamesController extends BaseController {
     @Body('questionOrder') questionOrder: number,
     @Body('startTime') startTime: Date,
   ): Promise<GameAnswer> {
-    return this.gameService.skipGameQuestion(
+    return this.logicalQuestionsGameService.skipGameQuestion(
       assessmentId,
       candidateId,
       gameId,

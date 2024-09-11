@@ -248,4 +248,15 @@ export class UsersService {
 
     return invitation;
   }
+
+  async validateCandidate(candidateId: number, assessmentId: number) {
+    const candidate = await this.usersRepository.query(
+      `SELECT candidate_id FROM assessments_candidates WHERE candidate_id = ${candidateId} AND assessment_id = ${assessmentId}`,
+    );
+    if (candidate.length === 0) {
+      throw new NotFoundException(
+        'Candidate not found or not assigned in that assessment',
+      );
+    }
+  }
 }

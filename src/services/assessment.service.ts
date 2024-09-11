@@ -13,6 +13,30 @@ import * as moment from 'moment';
 export class AssessmentService {
   constructor(private assessmentsRepository: AssessmentsRepository) {}
 
+  async validateAssessment(assessment_id: number, hr_id: number) {
+    const assessment = await this.assessmentsRepository.findOne({
+      relations: ['created_by_hr'],
+      where: { id: assessment_id },
+    });
+    if (!assessment) {
+      throw new NotFoundException('Assessment not found');
+    }
+    if (assessment.created_by !== hr_id) {
+      throw new ConflictException(
+        'You are not allowed to archive or delete this assessment',
+      );
+    }
+  }
+
+  async validateAssessmentById(id: number): Promise<void> {
+    const assessment: Assessments = await this.assessmentsRepository.findOne({
+      where: { id },
+    });
+    if (!assessment) {
+      throw new Error('Assessment not found');
+    }
+  }
+
   async checkOrCreateAssessment(
     params: FindOrCreateAssessmentInterface,
     userId: number,
@@ -46,45 +70,23 @@ export class AssessmentService {
       }
 
       // Create assessment
-      assessment = await this.assessmentsRepository.create(paramCreate);
+      assessment = this.assessmentsRepository.create(paramCreate);
       await this.assessmentsRepository.save(assessment);
     }
     return assessment;
   }
 
   async archiveAssessment(id: number, hr_id: number) {
-    const assessment: Assessments = await this.assessmentsRepository.findOne({
-      relations: ['created_by_hr'],
-      where: { id },
-    });
-    if (!assessment) {
-      throw new NotFoundException('Assessment not found');
-    }
-    if (assessment.created_by !== hr_id) {
-      throw new ConflictException(
-        'You are not allowed to archive this assessment',
-      );
-    }
+    await this.validateAssessment(id, hr_id);
+
+    const assessment = await this.getAssessmentById(id);
     assessment.is_archived = true;
+
     await this.assessmentsRepository.save(assessment);
   }
 
   async deleteAssessment(id: number, hr_id: number) {
-    const assessment: Assessments = await this.assessmentsRepository.findOne({
-      relations: ['created_by_hr'],
-      where: { id },
-    });
-
-    if (!assessment) {
-      throw new NotFoundException('Assessment not found');
-    }
-
-    if (assessment.created_by !== hr_id) {
-      throw new ConflictException(
-        'You are not allowed to delete this assessment',
-      );
-    }
-
+    await this.validateAssessment(id, hr_id);
     await this.assessmentsRepository.delete(id);
   }
 
@@ -93,18 +95,9 @@ export class AssessmentService {
     params: FindOrCreateAssessmentInterface,
     hr_id: number,
   ) {
-    const assessment: Assessments = await this.assessmentsRepository.findOne({
-      relations: ['created_by_hr'],
-      where: { id },
-    });
-    if (!assessment) {
-      throw new NotFoundException('Assessment not found');
-    }
-    if (assessment.created_by !== hr_id) {
-      throw new ConflictException(
-        'You are not allowed to update this assessment',
-      );
-    }
+    await this.validateAssessment(id, hr_id);
+    const assessment = await this.getAssessmentById(id);
+
     const paramUpdate: FindOrCreateAssessmentInterface = plainToClass(
       Assessments,
       {
@@ -139,13 +132,10 @@ export class AssessmentService {
     return assessments;
   }
 
-  async getAssessmentById(id: number, hr_id: number): Promise<Assessments> {
+  async getAssessmentById(id: number): Promise<Assessments> {
     const assessment: Assessments = await this.assessmentsRepository.findOne({
-      where: { id, created_by: hr_id },
+      where: { id },
     });
-    if (!assessment) {
-      throw new Error('Assessment not found');
-    }
     return assessment;
   }
 

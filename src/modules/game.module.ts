@@ -11,7 +11,8 @@ import { GameQuestionsModule } from './gameQuestions.module';
 import { AssessmentsModule } from './assessment.module';
 import { GameResultModule } from './gameResult.module';
 import { InvitationsModule } from './invitations.module';
-import { GameCronModule } from './schedule.module';
+import { UsersModule } from './users.module';
+import { LogicalQuestionsGameModule } from './logicalQuestionsGame.module';
 
 @Module({
   imports: [
@@ -20,10 +21,11 @@ import { GameCronModule } from './schedule.module';
     LogicalQuestionsModule,
     MemoryGameModule,
     GameQuestionsModule,
-    forwardRef(() => AssessmentsModule),
     GameResultModule,
     InvitationsModule,
-    GameCronModule,
+    forwardRef(() => AssessmentsModule),
+    forwardRef(() => UsersModule),
+    forwardRef(() => LogicalQuestionsGameModule),
   ],
   controllers: [GamesController],
   providers: [GamesService, GamesRepository],
