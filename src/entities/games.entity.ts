@@ -7,7 +7,6 @@ import {
 } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Assessments } from './assessments.entity';
-import { AssessmentsResult } from './assessments_result.entity';
 import { Users } from './users.entity';
 import { GameResult } from './game_result.entity';
 import { GameTypeEnum } from '../common/enum/game-type.enum';
@@ -25,13 +24,6 @@ export class Games extends BaseEntity {
   description: string;
 
   //Associations
-  @OneToMany(
-    () => AssessmentsResult,
-    (result: AssessmentsResult) => result.game,
-    { cascade: true },
-  )
-  assessment_results: AssessmentsResult[];
-
   @OneToMany(() => GameResult, (result: GameResult) => result.game, {
     cascade: true,
   })

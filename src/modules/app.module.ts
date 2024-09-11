@@ -20,7 +20,6 @@ import { Users } from '@entities/users.entity';
 import { Invitations } from '../entities/invitations.entity';
 import { Games } from '../entities/games.entity';
 import { Assessments } from '../entities/assessments.entity';
-import { AssessmentsResult } from '../entities/assessments_result.entity';
 import { Token } from '../entities/token.entity';
 import { AssessmentsModule } from './assessment.module';
 import { AppController } from '../controllers/app.controller';
@@ -56,7 +55,6 @@ const options = databaseConfig as TypeOrmModuleOptions;
       Games,
       Token,
       Assessments,
-      AssessmentsResult,
       GameResult,
       GameAnswer,
       LogicalQuestions,

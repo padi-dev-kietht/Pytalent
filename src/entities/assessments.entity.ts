@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Invitations } from './invitations.entity';
-import { AssessmentsResult } from './assessments_result.entity';
 import { Games } from './games.entity';
 import { GameResult } from './game_result.entity';
 import { Users } from './users.entity';
@@ -82,13 +81,6 @@ export class Assessments extends BaseEntity {
     { cascade: true },
   )
   invitations: Invitations[];
-
-  @OneToMany(
-    () => AssessmentsResult,
-    (result: AssessmentsResult) => result.assessment,
-    { cascade: true },
-  )
-  results: AssessmentsResult[];
 
   @OneToMany(() => GameResult, (result: GameResult) => result.assessment, {
     cascade: true,
