@@ -39,24 +39,24 @@ export class UsersService {
       },
     });
     if (!user) {
-      const paramCreate: createUserInterface = plainToClass(Users, {
-        email: params.email,
-        password: await bcrypt.hash(params.password, 10),
-        role: RoleEnum.HR,
-      });
-      user = await this.usersRepository.create(paramCreate);
-      await this.usersRepository.save(user);
+      throw new NotFoundException('User not found');
     }
+    const paramCreate: createUserInterface = plainToClass(Users, {
+      email: params.email,
+      password: await bcrypt.hash(params.password, 10),
+      role: RoleEnum.HR,
+    });
+    user = this.usersRepository.create(paramCreate);
+    await this.usersRepository.save(user);
     return user;
   }
 
   async deleteHr(id: number) {
     const user: Users = await this.usersRepository.findOne({ where: { id } });
-    if (user) {
-      await this.usersRepository.delete(id);
-    } else {
-      throw new Error('User not found');
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
+    await this.usersRepository.remove(user);
   }
 
   async addGamesToHr(id: number, gameIds: number[]) {

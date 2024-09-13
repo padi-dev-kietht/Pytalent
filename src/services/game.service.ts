@@ -2,14 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { GamesRepository } from '../repositories/game.repository';
 import { GameAnswerRepository } from '../repositories/gameAnswer.repository';
 import { MemoryGameRepository } from '../repositories/memoryGame.repository';
-import { MemoryGame } from '../entities/memory_game.entity';
-import { Games } from '../entities/games.entity';
 import { GameQuestionsRepository } from '../repositories/gameQuestion.repository';
 import { AssessmentsRepository } from '../repositories/assessment.repository';
 import { GameResultRepository } from '../repositories/gameResult.repository';
 import { AssessmentStatusEnum } from '../common/enum/assessment-status.enum';
 import { GameQuestions } from '../entities/game_questions.entity';
-import { GameAnswerDto } from '../dtos/gameAnswerResponse.dto';
 import { AssessmentService } from './assessment.service';
 import { UsersService } from './users.service';
 import { GameAnswer } from '../entities/game_answer.entity';
@@ -146,6 +143,4 @@ export class GamesService {
     await this.gameResultRepository.save(gameResult);
     return gameResult;
   }
-
-  //Memory Game
 }
