@@ -9,7 +9,6 @@ import {
 } from '@entities/index';
 import { UsersAdminController } from '@controllers/users.admin.controller';
 import { UsersHrController } from '../controllers/users.hr.controller';
-import { UsersCandidateController } from '../controllers/users.candidate.controller';
 import { UsersRepository } from '../repositories/user.repository';
 import { AssessmentsModule } from './assessment.module';
 import { GamesModule } from './game.module';
@@ -28,11 +27,7 @@ import { MailService } from '../common/lib/mail/mail.lib';
     GamesModule,
     InvitationsModule,
   ],
-  controllers: [
-    UsersAdminController,
-    UsersCandidateController,
-    UsersHrController,
-  ],
+  controllers: [UsersAdminController, UsersHrController],
   providers: [UsersService, UsersRepository, MailService],
   exports: [UsersService, UsersRepository],
 })

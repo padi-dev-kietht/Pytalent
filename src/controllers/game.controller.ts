@@ -2,7 +2,6 @@ import { Body, Controller, Param, Post, Res } from '@nestjs/common';
 
 import { BaseController } from './base.controller';
 import { GamesService } from '../services/game.service';
-import { GameAnswer } from '../entities/game_answer.entity';
 import { Response } from 'express';
 import { LogicalQuestionsGameService } from '../services/logicalQuestionsGame.service';
 import { MemoryGameService } from '../services/memoryGame.service';
