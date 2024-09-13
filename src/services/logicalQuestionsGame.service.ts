@@ -98,27 +98,25 @@ export class LogicalQuestionsGameService {
     candidateId: number,
   ) {
     await this.gameService.startGame(gameId, assessmentId, candidateId);
+    await this.gameService.validateLogicalQuestionsGame(gameId);
+    await this.gameService.deletePreviousQuestions(assessmentId);
 
-    const game = await this.gameService.getGameById(gameId);
-    if (game.game_type === 'logical') {
-      await this.gameService.deletePreviousQuestions(assessmentId);
+    const randomQuestionsList = await this.getRandomQuestions();
+    const gameQuestions = randomQuestionsList.map((question, index) => ({
+      question_id: question.id,
+      game_id: gameId,
+      assessment_id: assessmentId,
+      order: index + 1,
+      created_at: new Date(),
+    }));
+    await this.gameQuestionsRepository.save(gameQuestions);
 
-      const randomQuestionsList = await this.getRandomQuestions();
-      const gameQuestions = randomQuestionsList.map((question, index) => ({
-        question_id: question.id,
-        game_id: gameId,
-        assessment_id: assessmentId,
-        order: index + 1,
-        created_at: new Date(),
-      }));
-      await this.gameQuestionsRepository.save(gameQuestions);
-
-      const gameStartedTimer = new Date();
-      const questionsList =
-        await this.gameService.getGameQuestionsByAssessmentId(assessmentId);
-      const firstQuestion = questionsList[0];
-      return { candidateId, assessmentId, gameStartedTimer, firstQuestion };
-    } else throw new Error(`Playing wrong game`);
+    const gameStartedTimer = new Date();
+    const questionsList = await this.gameService.getGameQuestionsByAssessmentId(
+      assessmentId,
+    );
+    const firstQuestion = questionsList[0];
+    return { candidateId, assessmentId, gameStartedTimer, firstQuestion };
   }
 
   async submitGameAnswer(
@@ -129,7 +127,7 @@ export class LogicalQuestionsGameService {
     answer: boolean,
     startTime: Date,
   ): Promise<GameAnswerDto> {
-    await this.assessmentService.getAssessmentById(assessmentId);
+    await this.assessmentService.validateAssessmentById(assessmentId);
     await this.gameService.validateGameById(gameId);
     await this.userService.validateCandidate(candidateId, assessmentId);
 
@@ -156,7 +154,7 @@ export class LogicalQuestionsGameService {
       throw new RequestTimeoutException('Timed out');
     }
 
-    const nextQuestion = this.gameService.getNextQuestion(questionOrder);
+    const nextQuestion = await this.gameService.getNextQuestion(questionOrder);
 
     const savedGameAnswer = await this.gameAnswerRepository.save(gameAnswer);
     const gameAnswers: GameAnswerDto = {
@@ -176,7 +174,7 @@ export class LogicalQuestionsGameService {
     questionOrder: number,
     startTime: Date,
   ): Promise<any> {
-    await this.assessmentService.getAssessmentById(assessmentId);
+    await this.assessmentService.validateAssessmentById(assessmentId);
     await this.gameService.validateGameById(gameId);
     await this.userService.validateCandidate(candidateId, assessmentId);
 
@@ -202,7 +200,7 @@ export class LogicalQuestionsGameService {
       throw new RequestTimeoutException('Timed out');
     }
 
-    const nextQuestion = this.gameService.getNextQuestion(questionOrder);
+    const nextQuestion = await this.gameService.getNextQuestion(questionOrder);
 
     const savedGameAnswer = await this.gameAnswerRepository.save(gameAnswer);
     const gameAnswers: GameAnswerDto = {
