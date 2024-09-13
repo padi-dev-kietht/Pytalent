@@ -35,6 +35,9 @@ export class AssessmentService {
     if (!assessment) {
       throw new Error('Assessment not found');
     }
+    if (assessment.is_archived) {
+      throw new NotFoundException('Assessment is archived');
+    }
   }
 
   async checkOrCreateAssessment(
