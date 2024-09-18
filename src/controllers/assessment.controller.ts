@@ -44,43 +44,6 @@ export class AssessmentController extends BaseController {
     );
   }
 
-  // Getting an assessment by ID
-  @Get('/:id')
-  @UseGuards(
-    JwtAuthGuard,
-    new AuthorizationGuard([RoleEnum.HR, RoleEnum.ADMIN]),
-  )
-  async getAssessmentById(id: number, @Res() res: Response, @Request() req) {
-    const assessment = await this.assessmentService.getAssessmentById(
-      id,
-      req.user.id,
-    );
-    return this.successResponse(
-      {
-        data: assessment,
-      },
-      res,
-    );
-  }
-
-  // Getting game result in an assessment
-  @Get('/:id/result')
-  @UseGuards(
-    JwtAuthGuard,
-    new AuthorizationGuard([RoleEnum.HR, RoleEnum.ADMIN]),
-  )
-  async getGameResultByAssessmentId(
-    id: number,
-    @Res() res: Response,
-    @Request() req,
-  ) {
-    const gameResults = await this.gameService.getGameResultByAssessmentId(
-      id,
-      req.user.id,
-    );
-    return this.successResponse({ data: gameResults }, res);
-  }
-
   @Post('/invite/:invitation_id/authenticate')
   async acceptInvitation(
     @Request() req,

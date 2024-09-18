@@ -12,7 +12,6 @@ import { RoleEnum } from '@enum/role.enum';
 import { UsersRepository } from '../repositories/user.repository';
 import { Games } from '../entities/games.entity';
 import { GamesRepository } from '../repositories/game.repository';
-import { Assessments } from '../entities/assessments.entity';
 import { AssessmentsRepository } from '../repositories/assessment.repository';
 import { InviteCandidateDto } from '../dtos/invite-candidate.dto';
 import { InvitationStatusEnum } from '../common/enum/invitation-status.enum';
@@ -20,6 +19,7 @@ import { InvitationsRepository } from '../repositories/invitation.repository';
 import { MailService } from '../common/lib/mail/mail.lib';
 import { AssessmentStatusEnum } from '../common/enum/assessment-status.enum';
 import { Invitations } from '../entities/invitations.entity';
+import { AssessmentService } from './assessment.service';
 
 @Injectable()
 export class UsersService {
@@ -29,6 +29,7 @@ export class UsersService {
     private assessmentsRepository: AssessmentsRepository,
     private invitationsRepository: InvitationsRepository,
     private mailService: MailService,
+    private assessmentService: AssessmentService,
   ) {}
 
   // ADMIN
@@ -39,24 +40,24 @@ export class UsersService {
       },
     });
     if (!user) {
-      const paramCreate: createUserInterface = plainToClass(Users, {
-        email: params.email,
-        password: await bcrypt.hash(params.password, 10),
-        role: RoleEnum.HR,
-      });
-      user = await this.usersRepository.create(paramCreate);
-      await this.usersRepository.save(user);
+      throw new NotFoundException('User not found');
     }
+    const paramCreate: createUserInterface = plainToClass(Users, {
+      email: params.email,
+      password: await bcrypt.hash(params.password, 10),
+      role: RoleEnum.HR,
+    });
+    user = this.usersRepository.create(paramCreate);
+    await this.usersRepository.save(user);
     return user;
   }
 
   async deleteHr(id: number) {
     const user: Users = await this.usersRepository.findOne({ where: { id } });
-    if (user) {
-      await this.usersRepository.delete(id);
-    } else {
-      throw new Error('User not found');
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
+    await this.usersRepository.remove(user);
   }
 
   async addGamesToHr(id: number, gameIds: number[]) {
@@ -87,19 +88,16 @@ export class UsersService {
 
   // HR
   async addGamesToAssessment(
-    assessment_id: number,
+    assessmentId: number,
     gameIds: number[],
-    user_id: number,
+    userId: number,
   ) {
-    const assessment: Assessments = await this.assessmentsRepository.findOne({
-      where: { id: assessment_id },
-    });
-    if (!assessment) {
-      throw new NotFoundException('Assessment not found');
-    }
-
-    if (assessment.is_archived) {
-      throw new NotFoundException('Assessment is archived');
+    await this.assessmentService.validateAssessmentById(assessmentId);
+    const assessment = await this.assessmentService.getAssessmentById(
+      assessmentId,
+    );
+    if (assessment.created_by !== userId) {
+      throw new NotFoundException('You are not the owner of this assessment');
     }
 
     const games: Games[] = await this.gamesRepository.findByIds(gameIds);
@@ -107,16 +105,12 @@ export class UsersService {
       throw new NotFoundException('Games not found');
     }
 
-    if (assessment.created_by !== user_id) {
-      throw new NotFoundException('You are not the owner of this assessment');
-    }
-
     const placeholders = gameIds.map(() => '?').join(', ');
     const allowedGames = await this.usersRepository.query(
       `SELECT user_id, game_id 
         FROM hr_games 
         WHERE user_id = ? AND game_id IN (${placeholders})`,
-      [user_id, ...gameIds],
+      [userId, ...gameIds],
     );
     const allowedGameIds = allowedGames.map((game) => game.game_id);
 
@@ -145,35 +139,22 @@ export class UsersService {
         email: params.email,
         role: RoleEnum.CANDIDATE,
       });
-      user = await this.usersRepository.create(paramCreate);
+      user = this.usersRepository.create(paramCreate);
       await this.usersRepository.save(user);
     }
     return user;
   }
 
   async inviteCandidate(inviteCandidateDto: InviteCandidateDto): Promise<void> {
-    const { email, assessment_id } = inviteCandidateDto;
+    const { email, assessmentId } = inviteCandidateDto;
 
-    // Check if the candidate already exists, if not create one
-    let candidate: Users = await this.usersRepository.findOne({
-      where: { email, role: RoleEnum.CANDIDATE },
-    });
-    if (!candidate) {
-      candidate = await this.checkOrCreateCandidate({ email });
-    }
+    const candidate = await this.checkOrCreateCandidate({ email });
 
-    // Check if the assessment exists or is archived
-    const assessment: Assessments = await this.assessmentsRepository.findOne({
-      where: { id: assessment_id },
-    });
-    if (!assessment) {
-      throw new NotFoundException('Assessment not found');
-    }
-    if (assessment.is_archived) {
-      throw new NotFoundException('Assessment is archived');
-    }
+    await this.assessmentService.validateAssessmentById(assessmentId);
+    const assessment = await this.assessmentService.getAssessmentById(
+      assessmentId,
+    );
 
-    // Create an invitation
     const invitation = this.invitationsRepository.create({
       candidate_id: candidate.id,
       assessment_id: assessment.id,
@@ -182,7 +163,6 @@ export class UsersService {
 
     await this.invitationsRepository.save(invitation);
 
-    // Send an email with the invitation link
     const invitationLink = `http://localhost:3000/assessments/invite/${invitation.id}`;
     await this.mailService
       .to(email)
@@ -191,32 +171,22 @@ export class UsersService {
       .send();
   }
 
-  async addCandidateToAssessment(assessment_id: number, candidate_id: number) {
-    try {
-      const assessment: Assessments = await this.assessmentsRepository.findOne({
-        where: { id: assessment_id },
-      });
-      if (!assessment) {
-        throw new NotFoundException('Assessment not found');
-      }
-      if (assessment.is_archived) {
-        throw new NotFoundException('Assessment is archived');
-      }
+  async addCandidateToAssessment(assessmentId: number, candidate_id: number) {
+    await this.assessmentService.validateAssessmentById(assessmentId);
+    const assessment = await this.assessmentService.getAssessmentById(
+      assessmentId,
+    );
 
-      const candidate: Users = await this.usersRepository.findOne({
-        where: { id: candidate_id, role: RoleEnum.CANDIDATE },
-        relations: ['assessments_candidates'],
-      });
-
-      if (!candidate) {
-        throw new NotFoundException('Candidate not found');
-      }
-
-      candidate.assessments_candidates.push(assessment);
-      await this.usersRepository.save(candidate);
-    } catch (error) {
-      console.log(error);
+    const candidate: Users = await this.usersRepository.findOne({
+      where: { id: candidate_id, role: RoleEnum.CANDIDATE },
+      relations: ['assessments_candidates'],
+    });
+    if (!candidate) {
+      throw new NotFoundException('Candidate not found');
     }
+
+    candidate.assessments_candidates.push(assessment);
+    await this.usersRepository.save(candidate);
   }
 
   // Candidate
@@ -247,5 +217,16 @@ export class UsersService {
     );
 
     return invitation;
+  }
+
+  async validateCandidate(candidateId: number, assessmentId: number) {
+    const candidate = await this.usersRepository.query(
+      `SELECT candidate_id FROM assessments_candidates WHERE candidate_id = ${candidateId} AND assessment_id = ${assessmentId}`,
+    );
+    if (candidate.length === 0) {
+      throw new NotFoundException(
+        'Candidate not found or not assigned in that assessment',
+      );
+    }
   }
 }

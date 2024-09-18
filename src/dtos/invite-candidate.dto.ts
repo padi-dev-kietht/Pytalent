@@ -6,5 +6,5 @@ export class InviteCandidateDto {
 
   @IsInt()
   @IsNotEmpty()
-  assessment_id: number;
+  assessmentId: number;
 }
