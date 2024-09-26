@@ -1,11 +1,11 @@
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { RoleEnum } from '@enum/role.enum';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@modules/app/app.module';
-import { AppService } from '@modules/app/app.service';
 import { INestApplication } from '@nestjs/common';
+import { CreateUserDto } from '../../../../src/dtos/create-user.dto';
+import { AppModule } from '../../../../src/modules/app.module';
+import { AppService } from '../../../../src/services/app.service';
 
 describe('Create User DTO', () => {
   let app: INestApplication;
@@ -24,7 +24,7 @@ describe('Create User DTO', () => {
     param = {
       email: 'testdto@gmail.com',
       password: '123456',
-      role: RoleEnum.MEMBER,
+      role: RoleEnum.ADMIN,
     };
   });
   afterAll(async () => {

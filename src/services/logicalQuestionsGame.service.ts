@@ -17,9 +17,9 @@ import { GameAnswerRepository } from '../repositories/gameAnswer.repository';
 @Injectable()
 export class LogicalQuestionsGameService {
   constructor(
-    private readonly gameQuestionsRepository: GameQuestionsRepository,
-    private readonly logicalQuestionsRepository: LogicalQuestionsRepository,
-    private readonly gameAnswerRepository: GameAnswerRepository,
+    private gameQuestionsRepository: GameQuestionsRepository,
+    private logicalQuestionsRepository: LogicalQuestionsRepository,
+    private gameAnswerRepository: GameAnswerRepository,
     @Inject(forwardRef(() => GamesService))
     private gameService: GamesService,
     @Inject(forwardRef(() => AssessmentService))
@@ -27,11 +27,16 @@ export class LogicalQuestionsGameService {
     @Inject(forwardRef(() => UsersService))
     private userService: UsersService,
   ) {}
+
   async getLogicalQuestions(): Promise<LogicalQuestions[]> {
-    return this.logicalQuestionsRepository.find();
+    const questions = await this.logicalQuestionsRepository.find({});
+    if (questions.length === 0) {
+      throw new NotFoundException('Questions not found.');
+    }
+    return questions;
   }
 
-  async getGameQuestion(questionOrder: number) {
+  async getGameQuestionOrThrow(questionOrder: number) {
     const question = await this.gameQuestionsRepository.findOne({
       where: { order: questionOrder },
       relations: ['question'],
@@ -70,6 +75,9 @@ export class LogicalQuestionsGameService {
     while (selectedQuestions.length > 0) {
       const randomIndex = Math.floor(Math.random() * selectedQuestions.length);
       const question = selectedQuestions.splice(randomIndex, 1)[0];
+      if (!question) {
+        continue;
+      }
       if (question.is_conclusion_correct) {
         if (trueCount < 3) {
           sortedQuestions.push(question);
@@ -131,7 +139,7 @@ export class LogicalQuestionsGameService {
     await this.gameService.validateGameById(gameId);
     await this.userService.validateCandidate(candidateId, assessmentId);
 
-    const question = await this.getGameQuestion(questionOrder);
+    const question = await this.getGameQuestionOrThrow(questionOrder);
 
     const totalTime = 90; //fixes the total time to 90 seconds
     const isCorrect = question.question.is_conclusion_correct === answer;
@@ -178,7 +186,7 @@ export class LogicalQuestionsGameService {
     await this.gameService.validateGameById(gameId);
     await this.userService.validateCandidate(candidateId, assessmentId);
 
-    const question = await this.getGameQuestion(questionOrder);
+    const question = await this.getGameQuestionOrThrow(questionOrder);
 
     const totalTime = 90; //fixes the total time to 90 seconds
     const endTime = new Date();
