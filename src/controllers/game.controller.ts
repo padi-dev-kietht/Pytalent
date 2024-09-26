@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 
 import { BaseController } from './base.controller';
 import { GamesService } from '../services/game.service';
@@ -14,6 +14,11 @@ export class GamesController extends BaseController {
     private gameService: GamesService,
   ) {
     super();
+  }
+
+  @Get('/questions')
+  async getLogicalQuestions() {
+    return this.logicalQuestionsGameService.getLogicalQuestions();
   }
 
   @Post(':id/start-lqg')

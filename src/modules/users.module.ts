@@ -7,13 +7,13 @@ import {
   TokenEntity,
   UsersEntity,
 } from '@entities/index';
-import { UsersAdminController } from '@controllers/users.admin.controller';
 import { UsersHrController } from '../controllers/users.hr.controller';
 import { UsersRepository } from '../repositories/user.repository';
 import { AssessmentsModule } from './assessment.module';
 import { GamesModule } from './game.module';
 import { InvitationsModule } from './invitations.module';
 import { MailService } from '../common/lib/mail/mail.lib';
+import { UsersAdminController } from '../controllers/users.admin.controller';
 
 @Module({
   imports: [

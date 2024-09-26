@@ -8,14 +8,14 @@ import {
   Delete,
   Get,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '@guards/jwt-auth.guard';
 import { Response } from 'express';
-import { UsersService } from '@services/users.service';
-import { AuthorizationGuard } from '@guards/authorization.guard';
-import { RoleEnum } from '@enum/role.enum';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { BaseController } from './base.controller';
 import { AssessmentService } from '../services/assessment.service';
+import { UsersService } from '../services/users.service';
+import { AuthorizationGuard } from '../shared/guards/authorization.guard';
+import { JwtAuthGuard } from '../shared/guards/jwt-auth.guard';
+import { RoleEnum } from '../common/enum/role.enum';
 
 @Controller('admin/users')
 export class UsersAdminController extends BaseController {

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
-import { AppModule } from '@modules/app/app.module';
-import { AppService } from '@modules/app/app.service';
-import { AuthService } from '@services/auth.service';
-import { RoleEnum } from '@enum/role.enum';
+import { AppModule } from '../../src/modules/app.module';
+import { AppService } from '../../src/services/app.service';
+import { AuthService } from '../../src/services/auth.service';
+import { RoleEnum } from '../../src/common/enum/role.enum';
 
 describe('UsersAdminController (e2e)', () => {
   let app: INestApplication;
@@ -35,13 +35,13 @@ describe('UsersAdminController (e2e)', () => {
     return 'Bearer ' + result;
   }
 
-  test('Api create user: /admin/users/create', async () => {
+  test('Api create user: /admin/users/hr/create', async () => {
     const res = await request(app.getHttpServer())
-      .post('/admin/users/create')
+      .post('/admin/users/hr/create')
       .send({
         email: 'test@gmail.com',
         password: '123456',
-        role: RoleEnum.ADMIN,
+        role: RoleEnum.HR,
       })
       .set('Authorization', token);
 

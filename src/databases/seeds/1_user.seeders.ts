@@ -51,6 +51,7 @@ export default class CreateUsers implements Seeder {
         ).toISOString(),
       },
     ];
+
     await connection
       .createQueryBuilder()
       .insert()

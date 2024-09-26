@@ -27,7 +27,7 @@ export const env = {
   isDevelopment: process.env.NODE_ENV === 'development',
   appPath: __dirname,
   app: {
-    port: normalizePort(process.env.PORT || getOsEnv('APP_PORT')),
+    port: normalizePort(process.env.PORT || getOsEnvOptional('APP_PORT')),
     urlApi: getOsEnv('APP_URL_API'),
     fileSystemDriver: getOsEnv('FILESYSTEM_DRIVER'),
     disksDir: getOsEnv('DISKS_DIR') || '/public/uploads',

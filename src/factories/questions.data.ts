@@ -642,3 +642,9 @@ export const questions = [
     is_conclusion_correct: true,
   },
 ];
+
+export const twentyQuestionsData = Array.from({ length: 20 }, (_, index) => ({
+  question_id: index + 1,
+  assessment_id: 1,
+  order: index + 1,
+}));
