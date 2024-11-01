@@ -11,6 +11,7 @@ import * as path from 'path';
 import {
   AcceptLanguageResolver,
   CookieResolver,
+  I18nJsonLoader,
   I18nModule,
 } from 'nestjs-i18n';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -37,6 +38,7 @@ import { GamesModule } from './game.module';
 import { GameQuestions } from '../entities/game_questions.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { LogicalQuestionsGameModule } from './logicalQuestionsGame.module';
+import { BullMqModule } from './bullmq.module';
 // import { GraphQLModule } from '@nestjs/graphql';
 // import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 // import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
@@ -69,6 +71,7 @@ const options = databaseConfig as TypeOrmModuleOptions;
     }),
     I18nModule.forRoot({
       fallbackLanguage: 'en',
+      loader: I18nJsonLoader,
       loaderOptions: {
         path: path.join(__dirname, '../../', '/i18n/'),
         watch: true,
@@ -77,6 +80,7 @@ const options = databaseConfig as TypeOrmModuleOptions;
     }),
 
     //other module
+    BullMqModule,
     UsersModule,
     AuthModule,
     AssessmentsModule,

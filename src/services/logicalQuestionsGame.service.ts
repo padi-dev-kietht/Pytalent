@@ -13,6 +13,7 @@ import { GameAnswerDto } from '../dtos/gameAnswerResponse.dto';
 import { AssessmentService } from './assessment.service';
 import { UsersService } from './users.service';
 import { GameAnswerRepository } from '../repositories/gameAnswer.repository';
+import { BullmqService } from './bullmq.service';
 
 @Injectable()
 export class LogicalQuestionsGameService {
@@ -20,6 +21,7 @@ export class LogicalQuestionsGameService {
     private gameQuestionsRepository: GameQuestionsRepository,
     private logicalQuestionsRepository: LogicalQuestionsRepository,
     private gameAnswerRepository: GameAnswerRepository,
+    private readonly bullmqService: BullmqService,
     @Inject(forwardRef(() => GamesService))
     private gameService: GamesService,
     @Inject(forwardRef(() => AssessmentService))
@@ -108,6 +110,7 @@ export class LogicalQuestionsGameService {
     await this.gameService.startGame(gameId, assessmentId, candidateId);
     await this.gameService.validateLogicalQuestionsGame(gameId);
     await this.gameService.deletePreviousQuestions(assessmentId);
+    await this.bullmqService.addGameTimeoutJob(candidateId, assessmentId);
 
     const randomQuestionsList = await this.getRandomQuestions();
     const gameQuestions = randomQuestionsList.map((question, index) => ({
