@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { i18nValidationErrorFactory } from 'nestjs-i18n';
@@ -10,7 +10,6 @@ import { json, urlencoded } from 'express';
 import helmet from 'helmet';
 import { AllExceptionsFilter } from '@exception/handle.exception';
 import { AppModule } from './modules/app.module';
-import { createConnection } from 'typeorm';
 
 const allowedOrigins = [
   // WEBSITES
